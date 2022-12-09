@@ -1,4 +1,4 @@
-import { Card, Row, Image,Col } from "react-bootstrap";
+import { Card, Row, Image, Col } from "react-bootstrap";
 import styled from "styled-components";
 
 export const CardRow = styled(Card)`
@@ -29,9 +29,8 @@ export const CardDesc = styled(Col)`
     width: 262px;
     height: 89px; 
     margin-left: 24px;
-    border: 2px solid red;
 `
-export const CompanyTitle= styled.div`
+export const CompanyTitle = styled.div`
     height:17px;
     font-family: 'League Spartan';
     font-style: normal;
@@ -41,13 +40,14 @@ export const CompanyTitle= styled.div`
     color: #5CA5A5;
 `
 export const CardTraits = styled.div`
+    display:flex;
+    align-items:center;
     width: 138px;
     height: 24px;
     margin-left: 15px;
     margin-right:23px;
-    border: 2px solid red;
 `
-export const JobTitle= styled.div`
+export const JobTitle = styled.div`
     height: 24px;
     font-family: 'League Spartan';
     font-style: normal;
@@ -55,4 +55,30 @@ export const JobTitle= styled.div`
     font-size: 22px;
     line-height: 24px;
     color: #2B3939;
+`
+export const CardTraitElement = styled.div`
+    background: #5CA5A5;
+    border-radius: 12px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    width:51px;
+    height:24px;
+    font-family: 'League Spartan';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 16px;
+    text-align: center;
+    letter-spacing: -0.107692px;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-top: 2px;
+`
+export const CardTraitFeatElement = styled(CardTraitElement)`
+    background: #000000;
+    width:82px;
+    margin-left:14px;
 `
