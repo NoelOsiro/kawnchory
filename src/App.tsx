@@ -8,6 +8,8 @@ import { AppContainer, Main } from './styles/app';
     <Navbar/> 
     <AppContainer>
       <JobCard/>
+      <JobCard/>
+      <JobCard/>
     </AppContainer>
    
   </Main>

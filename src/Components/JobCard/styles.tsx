@@ -9,6 +9,7 @@ export const CardRow = styled(Card)`
     border-radius: 5px;
     border-left: 3px solid  #5CA5A5;
     display: flex;
+    margin-bottom:24px;
 `
 export const CardContent = styled(Row)`
     display: flex;
@@ -25,10 +26,11 @@ export const CardLogo = styled(Image)`
     width: 88px;
     height:88px;
 `
-export const CardDesc = styled(Col)`
-    width: 262px;
+export const CardDesc = styled(Row)`
     height: 89px; 
     margin-left: 24px;
+    width:1000px
+ 
 `
 export const CompanyTitle = styled.div`
     height:17px;
@@ -121,12 +123,9 @@ export const CardDetails = styled.div`
 
 `
 export const JobTraitList = styled.ul`
-    position: absolute;
-    left: rigth;
+    margin-left: 206px;
     width: 400px;
     height: 32px;
-    left: 835px;
-    top: 273px;
     display: flex;
     flex-direction: row;
     align-items: center;

@@ -13,6 +13,7 @@ const JobCard = () => {
       <CardContent>
         <CardLogo src={Photosnap} />
         <CardDesc>
+          <Col className= "col-12">
           <FeatRow>
             <CompanyTitle>Photosnap</CompanyTitle>
             <CardTraits>
@@ -21,14 +22,14 @@ const JobCard = () => {
               </CardTraits>
           </FeatRow>
           <FeatRow>
-            <JobTitle>Senior Frontend Developer</JobTitle>
-              <JobTraitList>
+            <JobTitle>Senior Frontend Developer</JobTitle>  
+            <JobTraitList>
                 <JobTraitListItem>Frontend</JobTraitListItem>
                 <JobTraitListItem>Senior</JobTraitListItem>
                 <JobTraitListItem>HTML</JobTraitListItem>
                 <JobTraitListItem>CSS</JobTraitListItem>
                 <JobTraitListItem>JavaScript</JobTraitListItem>
-              </JobTraitList>              
+              </JobTraitList>            
           </FeatRow>
           <StatusRow >
             <CardDetails>
@@ -39,6 +40,7 @@ const JobCard = () => {
               </StatusRowList>  
             </CardDetails>
           </StatusRow>
+          </Col>          
         </CardDesc>
       </CardContent>
     </CardRow>
