@@ -1,22 +1,46 @@
 import React from 'react'
-import { CardRow, CardContent, CardLogo, CardDesc, CompanyTitle, CardTraits, JobTitle, CardTraitElement, CardTraitFeatElement} from './styles'
+import { CardRow, CardContent, 
+  CardLogo, CardDesc,
+  CompanyTitle, CardTraits, JobTitle, JobTraitList, JobTraitListItem,
+  CardTraitElement, CardTraitFeatElement,
+  CardDetails, FeatRow, StatusRow, StatusRowList, StatusListItem, StatusListItem1, StatusListItem2 } from './styles'
 import Photosnap from "../../assets/images/photosnap.png";
-import { Row } from 'react-bootstrap';
+import { Card, Row, Image, Col } from "react-bootstrap";
 
 const JobCard = () => {
   return (
     <CardRow>
-        <CardContent>
-            <CardLogo src={Photosnap}/>
-            <CardDesc>
-                <Row style={{display:"flex",alignItems:"center",marginBottom:"10px"}}><CompanyTitle>Photosnap</CompanyTitle>
-                <CardTraits>
-                  <CardTraitElement>NEW!</CardTraitElement> <CardTraitFeatElement>FEATURED</CardTraitFeatElement></CardTraits></Row>
-                <Row style={{display:"flex",marginBottom:"10px"}}><JobTitle>Senior Frontend Developer</JobTitle></Row>
-                <Row style={{display:"flex"}}><div>1d ago Featured USA only</div></Row>
-                
-            </CardDesc>
-        </CardContent>
+      <CardContent>
+        <CardLogo src={Photosnap} />
+        <CardDesc>
+          <FeatRow>
+            <CompanyTitle>Photosnap</CompanyTitle>
+            <CardTraits>
+              <CardTraitElement>NEW!</CardTraitElement>
+              <CardTraitFeatElement>FEATURED</CardTraitFeatElement>
+              </CardTraits>
+          </FeatRow>
+          <FeatRow>
+            <JobTitle>Senior Frontend Developer</JobTitle>
+              <JobTraitList>
+                <JobTraitListItem>Frontend</JobTraitListItem>
+                <JobTraitListItem>Senior</JobTraitListItem>
+                <JobTraitListItem>HTML</JobTraitListItem>
+                <JobTraitListItem>CSS</JobTraitListItem>
+                <JobTraitListItem>JavaScript</JobTraitListItem>
+              </JobTraitList>              
+          </FeatRow>
+          <StatusRow >
+            <CardDetails>
+              <StatusRowList>
+                <StatusListItem1>1d ago</StatusListItem1>
+                <StatusListItem>Featured</StatusListItem>
+                <StatusListItem2>USA only</StatusListItem2>
+              </StatusRowList>  
+            </CardDetails>
+          </StatusRow>
+        </CardDesc>
+      </CardContent>
     </CardRow>
   )
 }

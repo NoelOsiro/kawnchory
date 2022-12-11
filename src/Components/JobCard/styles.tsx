@@ -47,7 +47,7 @@ export const CardTraits = styled.div`
     margin-left: 15px;
     margin-right:23px;
 `
-export const JobTitle = styled.div`
+export const JobTitle = styled.p`
     height: 24px;
     font-family: 'League Spartan';
     font-style: normal;
@@ -56,6 +56,33 @@ export const JobTitle = styled.div`
     line-height: 24px;
     color: #2B3939;
 `
+export const FeatRow = styled(Row)`
+    height:24px;
+    display:flex;
+    align-items:center;
+    margin-bottom:10px;
+`
+export const StatusRow = styled(FeatRow)`
+    margin-bottom:0px;
+        display: flex;
+`
+export const StatusRowList = styled.ul`
+    display: flex;
+    align-items: center;
+    padding-left: 0px;
+    margin: 0;
+    flex-wrap: wrap;
+`
+export const StatusListItem = styled.li`
+    margin-right:30px;
+`
+export const StatusListItem1 = styled(StatusListItem)`
+    list-style:none;
+`
+export const StatusListItem2 = styled(StatusListItem)`
+    margin-right:0px;
+`
+
 export const CardTraitElement = styled.div`
     background: #5CA5A5;
     border-radius: 12px;
@@ -81,4 +108,43 @@ export const CardTraitFeatElement = styled(CardTraitElement)`
     background: #000000;
     width:82px;
     margin-left:14px;
+`
+export const CardDetails = styled.div`
+    font-family: 'League Spartan';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: -0.138462px;
+    height: 24px;
+    color: #7C8F8F;
+
+`
+export const JobTraitList = styled.ul`
+    position: absolute;
+    left: rigth;
+    width: 400px;
+    height: 32px;
+    left: 835px;
+    top: 273px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-family: 'League Spartan';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 24px;
+    text-align: center;
+    letter-spacing: -0.123077px;
+    color: #5CA5A5;
+    list-style: none;
+    text-align: center;
+`
+export const JobTraitListItem = styled.li`
+    background: #eff6f6;
+    mix-blend-mode: normal;
+    border-radius: 4px;
+    padding:6px;
+    margin-right:16px;
 `
