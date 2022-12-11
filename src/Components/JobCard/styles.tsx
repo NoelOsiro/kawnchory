@@ -1,13 +1,16 @@
 import { Card, Row, Image, Col } from "react-bootstrap";
 import styled from "styled-components";
+interface IFeat{
+    featured:boolean
+}
 
-export const CardRow = styled(Card)`
+export const CardRow = styled(Card)<IFeat>`
     width: 1110px;
     height: 152px; 
     background: #FFFFFF;
     box-shadow: 0px 15px 20px -5px rgba(13, 113, 130, 0.15);
     border-radius: 5px;
-    border-left: 3px solid  #5CA5A5;
+    border-left:${props => props.featured ? '3px solid  #5CA5A5;' : 'none'};
     display: flex;
     margin-bottom:24px;
 `

@@ -14,7 +14,7 @@ interface Iprops {
 
 const JobCard:React.FC<Iprops> = (props:Iprops) => {
   return (
-    <CardRow>
+    <CardRow featured={props.data.features.indexOf('FEATURED') !==-1 }>
       <CardContent>
         <CardLogo src={props.data.logo} />
         <CardDesc>
