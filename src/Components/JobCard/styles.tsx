@@ -40,6 +40,7 @@ export const CompanyTitle = styled.div`
     font-size: 18px;
     line-height: 17px;
     color: #5CA5A5;
+    
 `
 export const CardTraits = styled.div`
     display:flex;
@@ -57,6 +58,10 @@ export const JobTitle = styled.p`
     font-size: 22px;
     line-height: 24px;
     color: #2B3939;
+    cursor:pointer;
+    &:hover {
+        color:#5CA5A5;
+    }
 `
 export const FeatRow = styled(Row)`
     height:24px;
@@ -143,4 +148,9 @@ export const JobTraitListItem = styled.li`
     border-radius: 4px;
     padding:6px;
     margin-right:16px;
+    cursor:pointer;
+    &:hover {
+        background:#5CA5A5;
+        color:white;
+    }
 `
