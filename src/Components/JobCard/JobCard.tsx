@@ -3,40 +3,54 @@ import { CardRow, CardContent,
   CardLogo, CardDesc,
   CompanyTitle, CardTraits, JobTitle, JobTraitList, JobTraitListItem,
   CardTraitElement, CardTraitFeatElement,
-  CardDetails, FeatRow, StatusRow, StatusRowList, StatusListItem, StatusListItem1, StatusListItem2 } from './styles'
+  CardDetails, FeatRow, StatusRow, StatusRowList, StatusListItem, StatusListItem1 } from './styles'
 import Photosnap from "../../assets/images/photosnap.png";
-import { Card, Row, Image, Col } from "react-bootstrap";
+import { Col } from "react-bootstrap";
+import { JobData } from '../../Services/Data/data';
 
-const JobCard = () => {
+interface Iprops {
+  data:JobData
+}
+
+const JobCard:React.FC<Iprops> = (props:Iprops) => {
   return (
     <CardRow>
       <CardContent>
-        <CardLogo src={Photosnap} />
+        <CardLogo src={props.data.logo} />
         <CardDesc>
           <Col className= "col-12">
           <FeatRow>
-            <CompanyTitle>Photosnap</CompanyTitle>
-            <CardTraits>
-              <CardTraitElement>NEW!</CardTraitElement>
-              <CardTraitFeatElement>FEATURED</CardTraitFeatElement>
-              </CardTraits>
+            <CompanyTitle>{props.data.company_title}</CompanyTitle>
+            {props.data.features.length > 0 ? (
+              <CardTraits>
+                {props.data.features.indexOf('NEW!') !==-1 
+                  && 
+                  <CardTraitElement>NEW!</CardTraitElement> 
+                }
+                {props.data.features.indexOf('FEATURED') !==-1 
+                  && 
+                  <CardTraitFeatElement>FEATURED</CardTraitFeatElement> 
+                }   
+              </CardTraits>):
+            null
+            }   
           </FeatRow>
           <FeatRow>
-            <JobTitle>Senior Frontend Developer</JobTitle>  
+            <JobTitle>{props.data.job_title}</JobTitle>  
             <JobTraitList>
-                <JobTraitListItem>Frontend</JobTraitListItem>
-                <JobTraitListItem>Senior</JobTraitListItem>
-                <JobTraitListItem>HTML</JobTraitListItem>
-                <JobTraitListItem>CSS</JobTraitListItem>
-                <JobTraitListItem>JavaScript</JobTraitListItem>
+                {props.data.job_tags.map((tag)=>(
+                  <JobTraitListItem>{tag}</JobTraitListItem>
+                ))}
               </JobTraitList>            
           </FeatRow>
           <StatusRow >
             <CardDetails>
               <StatusRowList>
-                <StatusListItem1>1d ago</StatusListItem1>
-                <StatusListItem>Featured</StatusListItem>
-                <StatusListItem2>USA only</StatusListItem2>
+                {props.data.status.map((status)=>(
+                  status.includes('ago') ?
+                   <StatusListItem1>{status}</StatusListItem1>:
+                   <StatusListItem>{status}</StatusListItem>
+                ))}
               </StatusRowList>  
             </CardDetails>
           </StatusRow>

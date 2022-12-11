@@ -81,9 +81,7 @@ export const StatusListItem = styled.li`
 export const StatusListItem1 = styled(StatusListItem)`
     list-style:none;
 `
-export const StatusListItem2 = styled(StatusListItem)`
-    margin-right:0px;
-`
+
 
 export const CardTraitElement = styled.div`
     background: #5CA5A5;
@@ -123,8 +121,7 @@ export const CardDetails = styled.div`
 
 `
 export const JobTraitList = styled.ul`
-    margin-left: 206px;
-    width: 400px;
+    margin-left: auto;
     height: 32px;
     display: flex;
     flex-direction: row;
