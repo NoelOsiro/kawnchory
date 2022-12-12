@@ -1,6 +1,12 @@
 import { Button, Col, Row } from "react-bootstrap"
 import styled from "styled-components"
 import SearchIcon from "../../assets/images/search.png";
+import  Closer from "../../assets/images/close.svg";
+import  CloserC from "../../assets/images/closerc.svg";
+
+interface IFeat{
+  active:boolean;
+}
 
 export const SearchBar = styled.div`
   position: relative;
@@ -43,6 +49,14 @@ export const SearchOptionText = styled.div`
     background-color: #5ca5a52f;
     border-radius:4px;
     z-index:2;  
+`
+export const SearchTag = styled.div`
+  width:32px;
+  height:32px;
+  background:url(${Closer}) no-repeat;
+  &:hover{
+    background:url(${CloserC}) no-repeat;
+  }
 `
 export const SearchForm = styled.form`
     filter: drop-shadow(6px 4px 6px rgba(99, 186, 186, 0.25));

@@ -1,10 +1,12 @@
 import React from 'react';
-import { SearchBar, SearchOptionCol, SearchOptionText, SearchRow, SearchInput,SearchForm, SubmitButton, ClearButton } from './styles';
+import { SearchBar, SearchOptionCol, SearchOptionText, SearchRow, SearchInput,SearchForm, SubmitButton, ClearButton, SearchTag } from './styles';
 import {ReactComponent as Close} from "../../assets/images/close.svg";
 
 
-interface IProps {
+
+export interface IProps {
   change:(e:React.ChangeEvent<HTMLInputElement>)=> void;
+  clickFilter:(e:React.MouseEvent<HTMLDivElement, MouseEvent>)=>void;
 }
 
 const FilterBar:React.FC<IProps> = (props:IProps) => {
@@ -13,16 +15,16 @@ const FilterBar:React.FC<IProps> = (props:IProps) => {
     <SearchBar>
         <SearchRow>
             <SearchOptionCol>
-            <SearchOptionText>Frontend</SearchOptionText>
-            <Close/>
+            <SearchOptionText onClick={props.clickFilter}>Frontend</SearchOptionText>
+            <SearchTag/>
             </SearchOptionCol>
             <SearchOptionCol>
-            <SearchOptionText>CSS</SearchOptionText>
-            <Close/>
+            <SearchOptionText onClick={props.clickFilter}>CSS</SearchOptionText>
+            <SearchTag/>
             </SearchOptionCol>
             <SearchOptionCol>
-            <SearchOptionText>JavaScript</SearchOptionText>
-            <Close/>
+            <SearchOptionText onClick={props.clickFilter}>JavaScript</SearchOptionText>
+            <SearchTag/>
             </SearchOptionCol>
             <SearchForm>
             <SearchInput name="search" type='text' 
