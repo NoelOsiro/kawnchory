@@ -3,11 +3,14 @@ import {  NavShape } from './styles'
 import Nav from '../../assets/images/nav.jpg'
 import FilterBar from '../FilterBar/FilterBar'
 
-const Navbar = () => {
+interface IProps {
+  change:(e:React.ChangeEvent<HTMLInputElement>)=> void;
+}
+const Navbar:React.FC<IProps> = (props:IProps) => {
   return (
     <NavShape>
       <img src={Nav} alt='' />
-      <FilterBar/>
+      <FilterBar change={props.change}/>
     </NavShape>
   )
 }
