@@ -7,6 +7,7 @@ import {ReactComponent as Close} from "../../assets/images/close.svg";
 export interface IProps {
   change:(e:React.ChangeEvent<HTMLInputElement>)=> void;
   clickFilter:(e:React.MouseEvent<HTMLDivElement, MouseEvent>)=>void;
+  clear:(e: React.MouseEvent<HTMLDivElement, MouseEvent>)=>void;
 }
 
 const FilterBar:React.FC<IProps> = (props:IProps) => {
@@ -32,7 +33,7 @@ const FilterBar:React.FC<IProps> = (props:IProps) => {
             onChange={props.change}/>
             <SubmitButton type="submit"/>
             </SearchForm>
-            <ClearButton>Clear</ClearButton> 
+            <ClearButton onClick={props.clear}>Clear</ClearButton> 
         </SearchRow>
     </SearchBar>
   )

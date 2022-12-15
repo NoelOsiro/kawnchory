@@ -14,9 +14,12 @@ const App:React.FC = () => {
     const value = e.target as HTMLElement;
     setSearch(value.innerText);
   }
+  const handleClear = (e:React.MouseEvent<HTMLDivElement, MouseEvent>)=>{
+    setSearch('');
+  }
   return (
   <Main>
-      <Navbar change={handleChange} clickFilter={handleClickFilter}/>
+      <Navbar change={handleChange} clickFilter={handleClickFilter} clear={handleClear}/>
       <AppContainer>
         {
           data.filter((candidate)=>(

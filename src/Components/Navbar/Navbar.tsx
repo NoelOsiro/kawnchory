@@ -7,7 +7,7 @@ const Navbar:React.FC<IProps> = (props:IProps) => {
   return (
     <NavShape>
       <img src={Nav} alt='' />
-      <FilterBar change={props.change} clickFilter={props.clickFilter}/>
+      <FilterBar change={props.change} clickFilter={props.clickFilter} clear={props.clear}/>
     </NavShape>
   )
 }

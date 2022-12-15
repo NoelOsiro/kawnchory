@@ -1,5 +1,6 @@
 import { Card, Row, Image, Col } from "react-bootstrap";
 import styled from "styled-components";
+
 interface IFeat{
     featured:boolean
 }
