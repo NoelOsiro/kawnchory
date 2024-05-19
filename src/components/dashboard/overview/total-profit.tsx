@@ -21,6 +21,7 @@ export function TotalProfit({ value, sx }: TotalProfitProps): React.JSX.Element 
             <Typography color="text.secondary" variant="overline">
               Total Profit
             </Typography>
+            <Typography variant="h5">Ksh</Typography>
             <Typography variant="h4">{value}</Typography>
           </Stack>
           <Avatar sx={{ backgroundColor: 'var(--mui-palette-primary-main)', height: '56px', width: '56px' }}>
