@@ -5,12 +5,18 @@ import { PlugsConnected as PlugsConnectedIcon } from '@phosphor-icons/react/dist
 import { User as UserIcon } from '@phosphor-icons/react/dist/ssr/User';
 import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
 import { XSquare } from '@phosphor-icons/react/dist/ssr/XSquare';
+import { Vault as VaultIcon } from '@phosphor-icons/react/dist/ssr/Vault';
+import { MapPin as MapPinIcon } from '@phosphor-icons/react/dist/ssr/MapPin';
+import { TreeStructure as TreeStructureIcon } from '@phosphor-icons/react/dist/ssr';
 
 export const navIcons = {
   'chart-pie': ChartPieIcon,
   'gear-six': GearSixIcon,
   'plugs-connected': PlugsConnectedIcon,
   'x-square': XSquare,
+  vault: VaultIcon,
+  treeStructure: TreeStructureIcon,
+  mappin: MapPinIcon,
   user: UserIcon,
   users: UsersIcon,
 } as Record<string, Icon>;
