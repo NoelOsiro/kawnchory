@@ -37,7 +37,7 @@ export interface LatestOrdersProps {
 export function LatestOrders({ orders = [], sx }: LatestOrdersProps): React.JSX.Element {
   return (
     <Card sx={sx}>
-      <CardHeader title="Latest orders" />
+      <CardHeader title="Latest tags" />
       <Divider />
       <Box sx={{ overflowX: 'auto' }}>
         <Table sx={{ minWidth: 800 }}>

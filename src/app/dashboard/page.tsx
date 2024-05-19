@@ -47,31 +47,31 @@ export default function Page(): React.JSX.Element {
           products={[
             {
               id: 'PRD-005',
-              name: 'Soja & Co. Eucalyptus',
+              name: 'Cattle Tracking Tag',
               image: '/assets/product-5.png',
               updatedAt: dayjs().subtract(18, 'minutes').subtract(5, 'hour').toDate(),
             },
             {
               id: 'PRD-004',
-              name: 'Necessaire Body Lotion',
+              name: 'RFID Reader',
               image: '/assets/product-4.png',
               updatedAt: dayjs().subtract(41, 'minutes').subtract(3, 'hour').toDate(),
             },
             {
               id: 'PRD-003',
-              name: 'Ritual of Sakura',
+              name: 'Cattle Feed Supplement',
               image: '/assets/product-3.png',
               updatedAt: dayjs().subtract(5, 'minutes').subtract(3, 'hour').toDate(),
             },
             {
               id: 'PRD-002',
-              name: 'Lancome Rouge',
+              name: 'Cattle Health Monitoring Kit',
               image: '/assets/product-2.png',
               updatedAt: dayjs().subtract(23, 'minutes').subtract(2, 'hour').toDate(),
             },
             {
               id: 'PRD-001',
-              name: 'Erbology Aloe Vera',
+              name: 'Water Trough',
               image: '/assets/product-1.png',
               updatedAt: dayjs().subtract(10, 'minutes').toDate(),
             },
@@ -84,47 +84,76 @@ export default function Page(): React.JSX.Element {
           orders={[
             {
               id: 'ORD-007',
-              customer: { name: 'Ekaterina Tankova' },
-              amount: 30.5,
+              customer: { name: 'John Doe' },
+              amount: 300.5,
               status: 'pending',
               createdAt: dayjs().subtract(10, 'minutes').toDate(),
             },
             {
               id: 'ORD-006',
+              customer: { name: 'Jane Smith' },
+              amount: 150.1,
+              status: 'completed',
+              createdAt: dayjs().subtract(2, 'hours').toDate(),
+            },
+            {
+              id: 'ORD-005',
               customer: { name: 'Cao Yu' },
-              amount: 25.1,
+              amount: 200.75,
               status: 'delivered',
-              createdAt: dayjs().subtract(10, 'minutes').toDate(),
+              createdAt: dayjs().subtract(1, 'day').toDate(),
             },
             {
               id: 'ORD-004',
               customer: { name: 'Alexa Richardson' },
-              amount: 10.99,
+              amount: 50.99,
               status: 'refunded',
-              createdAt: dayjs().subtract(10, 'minutes').toDate(),
+              createdAt: dayjs().subtract(3, 'days').toDate(),
             },
             {
               id: 'ORD-003',
               customer: { name: 'Anje Keizer' },
-              amount: 96.43,
+              amount: 196.43,
               status: 'pending',
-              createdAt: dayjs().subtract(10, 'minutes').toDate(),
+              createdAt: dayjs().subtract(5, 'days').toDate(),
             },
             {
               id: 'ORD-002',
               customer: { name: 'Clarke Gillebert' },
-              amount: 32.54,
-              status: 'delivered',
-              createdAt: dayjs().subtract(10, 'minutes').toDate(),
+              amount: 432.54,
+              status: 'completed',
+              createdAt: dayjs().subtract(1, 'week').toDate(),
             },
             {
               id: 'ORD-001',
               customer: { name: 'Adam Denisov' },
-              amount: 16.76,
-              status: 'delivered',
-              createdAt: dayjs().subtract(10, 'minutes').toDate(),
+              amount: 216.76,
+              status: 'completed',
+              createdAt: dayjs().subtract(2, 'weeks').toDate(),
             },
-          ]}
+            {
+              id: 'ORD-008',
+              customer: { name: 'Emily Johnson' },
+              amount: 85.5,
+              status: 'scheduled',
+              createdAt: dayjs().subtract(3, 'hours').toDate(),
+            },
+            {
+              id: 'ORD-009',
+              customer: { name: 'Michael Brown' },
+              amount: 125.3,
+              status: 'scheduled',
+              createdAt: dayjs().subtract(2, 'days').toDate(),
+            },
+            {
+              id: 'ORD-010',
+              customer: { name: 'Sophia Martinez' },
+              amount: 95.8,
+              status: 'completed',
+              createdAt: dayjs().subtract(4, 'days').toDate(),
+            },
+          ];
+          }
           sx={{ height: '100%' }}
         />
       </Grid>
