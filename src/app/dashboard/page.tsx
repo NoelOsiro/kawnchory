@@ -152,8 +152,7 @@ export default function Page(): React.JSX.Element {
               status: 'completed',
               createdAt: dayjs().subtract(4, 'days').toDate(),
             },
-          ];
-          }
+          ]}
           sx={{ height: '100%' }}
         />
       </Grid>

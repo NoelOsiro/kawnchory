@@ -19,13 +19,16 @@ const statusMap = {
   pending: { label: 'Pending', color: 'warning' },
   delivered: { label: 'Delivered', color: 'success' },
   refunded: { label: 'Refunded', color: 'error' },
+  scheduled: { label: 'Scheduled', color: 'info' },
+  completed: { label: 'Completed', color: 'primary' },
+  
 } as const;
 
 export interface Order {
   id: string;
   customer: { name: string };
   amount: number;
-  status: 'pending' | 'delivered' | 'refunded';
+  status: 'pending' | 'delivered' | 'refunded' | 'scheduled' | 'completed';
   createdAt: Date;
 }
 
