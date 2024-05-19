@@ -24,7 +24,7 @@ export function Logo({ color = 'dark', emblem, height = HEIGHT, width = WIDTH }:
   if (emblem) {
     url = color === 'light' ? '/assets/logo-emblem.svg' : '/assets/logo-emblem--dark.svg';
   } else {
-    url = color === 'light' ? '/assets/logo.svg' : '/assets/Cownchory-logo.png';
+    url = color === 'light' ? '/assets/Cownchory-logo-white.png' : '/assets/Cownchory-logo.png';
   }
 
   return <Box alt="logo" component="img" height={height} src={url} width={width} />;
