@@ -29,6 +29,7 @@ export function Budget({ diff, trend, sx, value }: BudgetProps): React.JSX.Eleme
               <Typography color="text.secondary" variant="overline">
                 Budget
               </Typography>
+              <Typography variant="h5">Ksh</Typography>
               <Typography variant="h4">{value}</Typography>
             </Stack>
             <Avatar sx={{ backgroundColor: 'var(--mui-palette-primary-main)', height: '56px', width: '56px' }}>
