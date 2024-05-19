@@ -1,46 +1,90 @@
-# Getting Started with Create React App
+## [Devias Kit - React](https://material-kit-react.devias.io/)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![license](https://img.shields.io/badge/license-MIT-blue.svg)
 
-## Available Scripts
+[![Devias Kit - React](https://github.com/devias-io/material-kit-react/blob/main/public/assets/thumbnail.png)](https://material-kit-react.devias.io/)
 
-In the project directory, you can run:
+> Free React Admin Dashboard made with [MUI's](https://mui.com) components, [React](https://reactjs.org) and of course [Next.js](https://github.com/vercel/next.js) to boost your app development process!
 
-### `npm start`
+## Pages 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- [Dashboard](https://material-kit-react.devias.io)
+- [Customers](https://material-kit-react.devias.io/dashboard/customers)
+- [Integrations](https://material-kit-react.devias.io/dashboard/integrations)
+- [Settings](https://material-kit-react.devias.io/dashboard/settings)
+- [Account](https://material-kit-react.devias.io/dashboard/account)
+- [Sign In](https://material-kit-react.devias.io/auth/sign-in)
+- [Sign Up](https://material-kit-react.devias.io/auth/sign-up)
+- [Reset Password](https://material-kit-react.devias.io/auth/reset-password)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Free Figma Community File
 
-### `npm test`
+- [Duplicate File](https://www.figma.com/file/b3L1Np4RYiicZAOMopHNkm/Devias-Dashboard-Design-Library-Kit)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Upgrade to PRO Version
 
-### `npm run build`
+We also have a pro version of this product which bundles even more pages and components if you want
+to save more time and design efforts :)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+| Free Version (this one)  | [Devias Kit Pro](https://mui.com/store/items/devias-kit-pro/)                |
+| ------------------------ | :--------------------------------------------------------------------------- |
+| **8** Pages              | **80+** Pages                                                                |
+| ✔ Custom Authentication  | ✔ Authentication with **Amplify**, **Auth0**, **Firebase** and **Supabase**  |
+| -                        | ✔ Vite Version                                                               |
+| -                        | ✔ Dark Mode Support                                                          |
+| -                        | ✔ Complete Users Flows                                                       |
+| -                        | ✔ Premium Technical Support                                                  |
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Quick start
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Clone the repo: `git clone https://github.com/devias-io/material-kit-react.git`
+- Make sure your Node.js and npm versions are up to date
+- Install dependencies: `npm install` or `yarn`
+- Start the server: `npm run dev` or `yarn dev`
+- Open browser: `http://localhost:3000`
 
-### `npm run eject`
+## File Structure
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Within the download you'll find the following directories and files:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
+┌── .editorconfig
+├── .eslintrc.js
+├── .gitignore
+├── CHANGELOG.md
+├── LICENSE.md
+├── next-env.d.ts
+├── next.config.js
+├── package.json
+├── README.md
+├── tsconfig.json
+├── public
+└── src
+	├── components
+	├── contexts
+	├── hooks
+	├── lib
+	├── styles
+	├── types
+	└── app
+		├── layout.tsx
+		├── page.tsx
+		├── auth
+		└── dashboard
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Resources
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- More freebies like this one: https://devias.io
 
-## Learn More
+## Reporting Issues:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- [Github Issues Page](https://github.com/devias-io/material-kit-react/issues)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## License
+
+- Licensed under [MIT](https://github.com/devias-io/material-kit-react/blob/main/LICENSE.md)
+
+## Contact Us
+
+- Email Us: support@deviasio.zendesk.com
