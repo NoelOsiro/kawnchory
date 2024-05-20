@@ -29,7 +29,7 @@ jobs:
 
       - name: Merge pull request
         if: success()
-        uses: peter-evans/merge-pull-request@v2
+        uses: peter-evans/enable-pull-request-automerge@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           merge-method: squash
