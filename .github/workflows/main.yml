@@ -1,5 +1,33 @@
-            - name: PR Build & Merge
-  # You may pin to the exact commit or the version.
-  # uses: nikhilaii93/pr-autobuild@69bba8cbd803284570d84212a2d3fcc62742ba26
-  uses: nikhilaii93/pr-autobuild@v1.0.0-beta.1
-          
+name: Build, Test, and Auto Merge Next.js App
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Next.js app
+        run: npm run build
+
+      - name: Merge pull request
+        if: success()
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          merge-method: squash
+          pull-request-number: ${{ github.event.pull_request.number }}
