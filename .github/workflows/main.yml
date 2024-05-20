@@ -30,4 +30,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           merge-method: squash
-          commit-message: "Automated merge after successful build and tests"
+          pull-request-number: ${{ github.event.pull_request.number }}
