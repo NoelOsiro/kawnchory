@@ -1,4 +1,4 @@
-name: Build and Test Next.js App
+name: Build, Test, and Auto Merge Next.js App
 
 on:
   pull_request:
@@ -26,3 +26,11 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Merge pull request
+        if: success()
+        uses: peter-evans/merge-pull-request@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          merge-method: squash
+          commit-message: "Automated merge after successful build and tests"
