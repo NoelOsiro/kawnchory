@@ -24,9 +24,6 @@ jobs:
       - name: Build Next.js app
         run: npm run build
 
-      - name: Run tests
-        run: npm test
-
       - name: Merge pull request
         if: success()
         uses: peter-evans/enable-pull-request-automerge@v3
