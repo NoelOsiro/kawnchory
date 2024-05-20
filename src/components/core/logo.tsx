@@ -49,7 +49,7 @@ export function DynamicLogo({
   const color = colorScheme === 'dark' ? colorDark : colorLight;
 
   return (
-    <NoSsr fallback={<Box sx={{ height: `${height}px`, width: `${width}px` }} />}>
+    <NoSsr fallback={<Box sx={{ height: `${String(height)}px`, width: `${String(width)}px` }} />}>
       <Logo color={color} height={height} width={width} {...props} />
     </NoSsr>
   );

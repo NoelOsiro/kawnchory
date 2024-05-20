@@ -44,8 +44,8 @@ export function UserProvider({ children }: UserProviderProps): React.JSX.Element
   }, []);
 
   React.useEffect(() => {
-    checkSession().catch((err) => {
-      logger.error(err);
+    checkSession().catch((error: unknown) => {
+      logger.error(error);
       // noop
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- Expected
