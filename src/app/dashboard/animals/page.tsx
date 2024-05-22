@@ -19,6 +19,8 @@ import { TasksProgress } from '@/components/dashboard/overview/tasks-progress';
 import { NextCount } from '@/components/dashboard/overview/next-count';
 import { Traffic } from '@/components/dashboard/overview/traffic';
 
+
+
 export const metadata = { title: `Customers | Dashboard | ${config.site.name}` } satisfies Metadata;
 
 const animals = [
