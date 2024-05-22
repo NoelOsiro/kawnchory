@@ -11,6 +11,13 @@ import { config } from '@/config';
 import { AnimalsFilters } from '@/components/dashboard/animals/animal-filters';
 import { AnimalsTable } from '@/components/dashboard/animals/animal-table';
 import type { Animal } from '@/components/dashboard/animals/animal-table';
+import { Counts } from '@/components/dashboard/overview/counts';
+import Grid from '@mui/system/Unstable_Grid/Grid';
+import { Count } from '@/components/dashboard/overview/today-count';
+import { Sales } from '@/components/dashboard/overview/sales';
+import { TasksProgress } from '@/components/dashboard/overview/tasks-progress';
+import { NextCount } from '@/components/dashboard/overview/next-count';
+import { Traffic } from '@/components/dashboard/overview/traffic';
 
 export const metadata = { title: `Customers | Dashboard | ${config.site.name}` } satisfies Metadata;
 
@@ -174,33 +181,69 @@ export default function Page(): React.JSX.Element {
   const paginatedAnimals = applyPagination(animals, page, rowsPerPage);
 
   return (
-    <Stack spacing={3}>
-      <Stack direction="row" spacing={3}>
-        <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
-          <Typography variant="h4">Farm Records</Typography>
-          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Button color="inherit" startIcon={<UploadIcon fontSize="var(--icon-fontSize-md)" />}>
-              Import
-            </Button>
-            <Button color="inherit" startIcon={<DownloadIcon fontSize="var(--icon-fontSize-md)" />}>
-              Export
-            </Button>
+    <Grid container spacing={3}>
+      <Grid lg={4} sm={6} xs={12}>
+        <Count diff={100} trend="up" sx={{ height: '100%' }} value="1,210" />
+      </Grid>
+      <Grid lg={4} sm={6} xs={12}>
+        <TasksProgress sx={{ height: '100%' }} value={75.5} />
+      </Grid>
+      <Grid lg={4} sm={6} xs={12}>
+        <NextCount sx={{ height: '100%' }} value="6:00 am" />
+      </Grid>
+      <Grid lg={12} sm={12} xs={12}>
+        <Stack spacing={3}>
+          <Stack spacing={3}>
+            <Counts
+              chartSeries={[
+                { name: 'This year', data: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20] },
+                { name: 'Last year', data: [12, 11, 4, 6, 2, 9, 9, 10, 11, 12, 13, 13] },
+              ]}
+              sx={{ height: '100%' }}
+            />
           </Stack>
+          <Stack direction="row" spacing={3}>
+            <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
+              <Typography variant="h4">Farm Records</Typography>
+              <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                <Button color="inherit" startIcon={<UploadIcon fontSize="var(--icon-fontSize-md)" />}>
+                  Import
+                </Button>
+                <Button color="inherit" startIcon={<DownloadIcon fontSize="var(--icon-fontSize-md)" />}>
+                  Export
+                </Button>
+              </Stack>
+            </Stack>
+            <div>
+              <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained">
+                Add
+              </Button>
+            </div>
+          </Stack>
+          <AnimalsFilters />
+          <AnimalsTable
+            count={paginatedAnimals.length}
+            page={page}
+            rows={paginatedAnimals}
+            rowsPerPage={rowsPerPage}
+          />
+          
         </Stack>
-        <div>
-          <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained">
-            Add
-          </Button>
-        </div>
-      </Stack>
-      <AnimalsFilters />
-      <AnimalsTable
-        count={paginatedAnimals.length}
-        page={page}
-        rows={paginatedAnimals}
-        rowsPerPage={rowsPerPage}
-      />
-    </Stack>
+      </Grid>
+      
+      <Grid lg={8} xs={12}>
+        <Sales
+          chartSeries={[
+            { name: 'This year', data: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20] },
+            { name: 'Last year', data: [12, 11, 4, 6, 2, 9, 9, 10, 11, 12, 13, 13] },
+          ]}
+          sx={{ height: '100%' }}
+        />
+      </Grid>
+      <Grid lg={4} md={6} xs={12}>
+        <Traffic chartSeries={[63, 15, 22]} labels={['Cows', 'Bulls', 'Calves']} sx={{ height: '100%' }} />
+      </Grid>
+    </Grid>
   );
 }
 
