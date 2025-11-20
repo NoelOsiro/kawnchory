@@ -1,3 +1,11 @@
+"""Deterministic, explainable segmentation node for customer behavior.
+
+This module provides a single async function `segmentation_node` which accepts
+a State or plain dict and returns a segmentation label, human-readable reasons,
+a compact metadata object for observability, and an optional routing_hint for
+upstream workflow routing.
+"""
+
 from __future__ import annotations
 
 from typing import Any, Dict, List
