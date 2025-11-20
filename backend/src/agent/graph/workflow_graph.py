@@ -23,22 +23,29 @@ from agent.graph.nodes.segment_merge import segment_merge
 from agent.state import State
 
 
-def create_state_graph() -> StateGraph:
+def create_state_graph(enabled_segments: set | None = None) -> StateGraph:
     """Create a fresh, uncompiled StateGraph for the Retail workflow.
 
     Returns a `StateGraph(State)` with all nodes and routing configured. Call
     `compile()` on the result to get a runnable workflow instance.
     """
+    if enabled_segments is None:
+        enabled_segments = {"behavior_seg", "profile_seg", "rfm_seg", "intent_seg"}
+
     graph = StateGraph(State)
 
     # Register nodes
     # Register segmentation nodes; provide `destinations` metadata so Studio
     # can render possible outgoing edges without adding static runtime edges.
     # Destinations are only used for rendering and do not affect execution.
-    graph.add_node("behavior_seg", behavior_seg)
-    graph.add_node("profile_seg", profile_seg)
-    graph.add_node("rfm_seg", rfm_seg)
-    graph.add_node("intent_seg", intent_seg)
+    if "behavior_seg" in enabled_segments:
+        graph.add_node("behavior_seg", behavior_seg)
+    if "profile_seg" in enabled_segments:
+        graph.add_node("profile_seg", profile_seg)
+    if "rfm_seg" in enabled_segments:
+        graph.add_node("rfm_seg", rfm_seg)
+    if "intent_seg" in enabled_segments:
+        graph.add_node("intent_seg", intent_seg)
     # Pre-segmentation inspection: normalize and flag incoming data
     graph.add_node("context_inspection", context_inspection, destinations=("behavior_seg","profile_seg","rfm_seg","intent_seg"))
     graph.add_node("retrieval", retrieval_node)
@@ -66,13 +73,14 @@ def create_state_graph() -> StateGraph:
         else:
             strat = getattr(state, "segmentation_strategy", None)
 
-        if strat == "behavior":
+        # Prefer enabled segmentors first
+        if strat == "behavior" and "behavior_seg" in enabled_segments:
             return "behavior_seg"
-        if strat == "profile":
+        if strat == "profile" and "profile_seg" in enabled_segments:
             return "profile_seg"
-        if strat == "rfm":
+        if strat == "rfm" and "rfm_seg" in enabled_segments:
             return "rfm_seg"
-        if strat == "intent":
+        if strat == "intent" and "intent_seg" in enabled_segments:
             return "intent_seg"
 
         # Fallback to presence checks for older callers or when inspection
@@ -82,14 +90,20 @@ def create_state_graph() -> StateGraph:
                 return key in state and state.get(key) is not None
             return hasattr(state, key) and getattr(state, key) is not None
 
-        if has("behavior_summary"):
+        # Fallback presence checks, prefer enabled ones
+        if has("behavior_summary") and "behavior_seg" in enabled_segments:
             return "behavior_seg"
-        if has("customer_profile"):
+        if has("customer_profile") and "profile_seg" in enabled_segments:
             return "profile_seg"
-        if has("rfm_signals"):
+        if has("rfm_signals") and "rfm_seg" in enabled_segments:
             return "rfm_seg"
-        if has("user_query") or has("intent"):
+        if (has("user_query") or has("intent")) and "intent_seg" in enabled_segments:
             return "intent_seg"
+        # If none of the preferred options are available, pick the first enabled
+        for fallback in ("behavior_seg", "profile_seg", "rfm_seg", "intent_seg"):
+            if fallback in enabled_segments:
+                return fallback
+        # As a last resort, default to behavior
         return "behavior_seg"
 
     # Ensure the route function has a stable name for Studio drawing
@@ -101,7 +115,8 @@ def create_state_graph() -> StateGraph:
     # Conditional edges originate from the inspection node so runtime writes
     # remain single-writer per LastValue key while Studio can still render
     # the possible outgoing edges.
-    graph.add_conditional_edges("context_inspection", route_from_start, path_map=["behavior_seg", "profile_seg", "rfm_seg", "intent_seg"])
+    # Only include enabled targets in the path_map so Studio/renderers stay accurate
+    graph.add_conditional_edges("context_inspection", route_from_start, path_map=[p for p in ("behavior_seg", "profile_seg", "rfm_seg", "intent_seg") if p in enabled_segments])
 
     graph.add_edge("retrieval", "generation")
     graph.add_edge("offers", "generation")
@@ -151,7 +166,7 @@ def create_state_graph() -> StateGraph:
     return graph
 
 
-def create_workflow(compiled: bool = True, name: str | None = "Retail Workflow Graph"):
+def create_workflow(compiled: bool = True, name: str | None = "Retail Workflow Graph", enabled_segments: set | None = None):
     """Create a workflow instance.
 
     If `compiled` is True (default), returns the compiled workflow (runnable)
@@ -159,12 +174,48 @@ def create_workflow(compiled: bool = True, name: str | None = "Retail Workflow G
     returns the uncompiled `StateGraph` (useful for tests that want to modify
     nodes before compile).
     """
-    graph = create_state_graph()
+    graph = create_state_graph(enabled_segments=enabled_segments)
     if compiled:
         return graph.compile(name=name)
     return graph
 
 
-# Backwards-compatible module-level workflows
-workflow = create_workflow()
+# Backwards-compatible module-level workflow (lazy initialized).
+# Creating the compiled workflow at import time can trigger heavy imports
+# and circular initialization races when the application is started under
+# auto-reloaders. Use lazy initialization so callers can obtain the workflow
+# when the import graph is stable.
+workflow = None
+
+
+# Helpers to atomically replace the module-level workflow instance.
+import threading
+
+_workflow_lock = threading.Lock()
+
+
+def replace_workflow(new_workflow):
+    """Atomically replace the module-level `workflow` instance.
+
+    Useful for runtime rebuilds performed by an admin API or background
+    task. Uses a simple threading lock so both sync and async callers can
+    safely swap the global reference.
+    """
+    global workflow
+    with _workflow_lock:
+        global workflow
+        workflow = new_workflow
+
+
+def get_workflow():
+    """Return the current module-level workflow instance."""
+    global workflow
+    # Lazily create the workflow on first access if it hasn't been built yet.
+    if workflow is None:
+        # Defer to create_workflow which constructs the graph; keep this
+        # guarded by the module-level lock in case callers race.
+        with _workflow_lock:
+            if workflow is None:
+                workflow = create_workflow()
+    return workflow
 

@@ -1,25 +1,15 @@
 import pytest
+import sys
 import os
+import pathlib
+import pytest
+
+# Ensure backend/src is on sys.path so `agent.*` imports resolve when
+# running tests from the repository root.
+HERE = pathlib.Path(__file__).resolve().parent
+BACKEND = HERE.parent
+SRC = BACKEND / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
 
 
-
-
-@pytest.fixture(scope="session")
-def anyio_backend():
-    return "asyncio"
-
-
-def pytest_collection_modifyitems(config, items):
-    """Skip LangSmith integration tests when `LANGSMITH_API_KEY` is not set.
-
-    Tests marked with `@pytest.mark.langsmith` require a valid LangSmith API
-    key and will fail in environments where the key isn't available. Skip
-    them to keep local test runs deterministic.
-    """
-    if os.getenv("LANGSMITH_API_KEY"):
-        return
-
-    skip_marker = pytest.mark.skip(reason="LangSmith API key not configured")
-    for item in items:
-        if "langsmith" in {m.name for m in item.iter_markers()}:
-            item.add_marker(skip_marker)
