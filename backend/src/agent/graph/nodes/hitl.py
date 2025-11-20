@@ -48,39 +48,42 @@ def hitl_node(state: Any, runtime: Any = None) -> Dict[str, Any]:
     # Do not auto-approve here; tests are responsible for invoking the
     # test-helper auto-approve when needed. We will, however, include an
     # existing human review result if one is already present.
-    human_review = _maybe_fetch_existing_review_result(review_id)
-    rev = get_review(review_id)
-    status = rev.get("status") if rev is not None else "pending"
+    # Small retry loop to ensure the review record is visible (helps in
+    # environments where DB writes may be briefly delayed). This keeps
+    # the node deterministic while making integration tests less flaky.
+    rev = None
+    for _ in range(3):
+        try:
+            rev = get_review(review_id)
+            if rev is not None:
+                break
+        except Exception:
+            rev = None
+        try:
+            import time
 
-    # Mutate the received state in-place when possible so the runtime's
-    # state object seen by downstream nodes includes the review metadata.
+            time.sleep(0.01)
+        except Exception:
+            pass
+
+    status = rev.get("status") if rev is not None else "pending"
+    human_review = _maybe_fetch_existing_review_result(review_id)
+
+    # Prepare a minimal result dict with the review metadata. Returning a
+    # dict ensures the graph runtime writes only these keys into the shared
+    # state — this is more reliable than attempting to mutate state-like
+    # objects in-place across different runtimes.
+    result = {"review_id": review_id, "status": status}
+    if human_review is not None:
+        result["human_review"] = human_review
+
+    # Also update the passed-in mapping when possible for convenience
+    # (so immediate callers that inspect the same object see the values).
     try:
         if isinstance(state, dict):
-            state["review_id"] = review_id
-            state["status"] = status
-            if human_review is not None:
-                state["human_review"] = human_review
-            return state
-        else:
-            # Try to set attributes on a state-like object
-            try:
-                setattr(state, "review_id", review_id)
-                setattr(state, "status", status)
-                if human_review is not None:
-                    setattr(state, "human_review", human_review)
-                return state
-            except Exception:
-                # Fall back to returning a dict copy if we cannot mutate
-                out_state = dict(getattr(state, "__dict__", {}))
-                out_state["review_id"] = review_id
-                out_state["status"] = status
-                if human_review is not None:
-                    out_state["human_review"] = human_review
-                return out_state
+            state.update(result)
     except Exception:
-        # As a last resort, return a minimal dict with review info
-        out = {"review_id": review_id, "status": status}
-        if human_review is not None:
-            out["human_review"] = human_review
-        return out
+        pass
+
+    return result
 

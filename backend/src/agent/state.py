@@ -50,6 +50,11 @@ class State(MessagesState):
 
     # HITL Feedback
     human_feedback: str | None = None
+    # Human-in-the-loop review fields
+    review_id: int | None = None
+    status: str | None = None
+    review_status: str | None = None
+    human_review: Dict[str, Any] | None = None
 
     # Delivery Node Output
     delivered_message: str | None = None

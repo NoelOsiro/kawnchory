@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 import os
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -55,7 +55,9 @@ def enqueue_review(state: Dict[str, Any]) -> int:
     """Enqueue a review and return its id."""
     conn = _get_conn()
     cur = conn.cursor()
-    now = datetime.utcnow().isoformat()
+    # Use timezone-aware UTC timestamps to avoid deprecation warnings and
+    # be explicit about timezone information when storing datetimes.
+    now = datetime.now(timezone.utc).isoformat()
     cur.execute(
         "INSERT INTO reviews (state_json, status, created_at) VALUES (?, ?, ?)",
         (json.dumps(state), "pending", now),
@@ -86,7 +88,7 @@ def get_review(review_id: int) -> Optional[Dict[str, Any]]:
 
 def approve_review(review_id: int, reviewer: str, notes: Optional[str] = None, result: Optional[Dict[str, Any]] = None) -> bool:
     conn = _get_conn()
-    now = datetime.utcnow().isoformat()
+    now = datetime.now(timezone.utc).isoformat()
     conn.execute(
         "UPDATE reviews SET status = ?, reviewed_at = ?, reviewer = ?, notes = ?, result_json = ? WHERE id = ?",
         ("approved", now, reviewer, notes, json.dumps(result) if result is not None else None, review_id),
@@ -97,7 +99,7 @@ def approve_review(review_id: int, reviewer: str, notes: Optional[str] = None, r
 
 def reject_review(review_id: int, reviewer: str, notes: Optional[str] = None) -> bool:
     conn = _get_conn()
-    now = datetime.utcnow().isoformat()
+    now = datetime.now(timezone.utc).isoformat()
     conn.execute(
         "UPDATE reviews SET status = ?, reviewed_at = ?, reviewer = ?, notes = ? WHERE id = ?",
         ("rejected", now, reviewer, notes, review_id),

@@ -86,15 +86,58 @@ if SEGMENT_CACHE_REDIS:
 
 
 def _make_cache_key(state: Any) -> str:
-    # Create a stable, deterministic key for the given input state. Use
-    # JSON with sorted keys to make ordering deterministic, then hash.
+    # Normalize the state to include only the signals relevant to segmentation
+    # so transient or irrelevant keys do not create cache fragmentation.
     try:
-        serial = json.dumps(state or {}, sort_keys=True, default=str)
+        norm = _normalize_state_for_cache(state)
+        serial = json.dumps(norm, sort_keys=True, default=str)
     except Exception:
-        serial = str(state)
+        # Fallback to best-effort serialization
+        try:
+            serial = json.dumps(state or {}, sort_keys=True, default=str)
+        except Exception:
+            serial = str(state)
+
     # include config fingerprint to avoid stale cached entries when thresholds change
     payload = _CACHE_FINGERPRINT + "|" + serial
-    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    key = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    logger.debug("segmentation cache key computed: %s (fingerprint=%s)", key, _CACHE_FINGERPRINT)
+    return key
+
+
+def _normalize_state_for_cache(state: Any) -> Dict[str, Any]:
+    """Return a minimal, deterministic representation of `state` used for.
+
+    cache key generation. This reduces cache fragmentation by only including
+    the signals that affect segmentation decisions.
+    """
+    norm: Dict[str, Any] = {}
+    if state is None:
+        return norm
+
+    # Extract behavior_summary in a predictable shape
+    behavior = None
+    if isinstance(state, dict):
+        behavior = state.get("behavior_summary") or {}
+        last_event = state.get("last_event") or (state.get("customer_profile") or {}).get("last_event")
+    else:
+        behavior = getattr(state, "behavior_summary", {}) or {}
+        last_event = getattr(state, "last_event", None) or (getattr(state, "customer_profile", {}) or {}).get("last_event")
+
+    # Coerce important numeric signals to ints to avoid string/float mismatches
+    norm_behavior: Dict[str, int] = {}
+    norm_behavior["views_last_7d"] = _to_int(behavior.get("views_last_7d", 0), 0)
+    norm_behavior["purchases_last_30d"] = _to_int(behavior.get("purchases_last_30d", 0), 0)
+
+    norm["behavior_summary"] = norm_behavior
+    # Normalize last_event to a short string (lowercased) to keep keys small
+    if last_event is not None:
+        try:
+            norm["last_event"] = str(last_event).strip().lower()
+        except Exception:
+            norm["last_event"] = str(last_event)
+
+    return norm
 
 
 @functools.lru_cache(maxsize=1024)
@@ -118,7 +161,12 @@ def _compute_segment_cached(key: str, serialized_state: str) -> Dict[str, Any]:
 
 def _get_cached_or_compute(state: Any) -> Dict[str, Any]:
     key = _make_cache_key(state)
-    serialized = json.dumps(state or {}, sort_keys=True, default=str)
+    # Serialize the normalized state rather than the raw state to keep cache
+    # entries consistent across equivalent inputs.
+    try:
+        serialized = json.dumps(_normalize_state_for_cache(state), sort_keys=True, default=str)
+    except Exception:
+        serialized = json.dumps(state or {}, sort_keys=True, default=str)
 
     # Try Redis first if configured
     if redis_client:
@@ -126,14 +174,15 @@ def _get_cached_or_compute(state: Any) -> Dict[str, Any]:
             cached = redis_client.get(key)
             if cached:
                 try:
+                    logger.debug("segmentation redis cache hit: %s", key)
                     return json.loads(cached)
                 except Exception:
-                    # fall through to recompute
-                    logger.debug("Failed to parse cached redis value, recomputing")
+                    logger.debug("Failed to parse cached redis value for key=%s, recomputing", key)
             # compute and store
             res = _compute_segment_cached(key, serialized)
             try:
                 redis_client.setex(key, SEGMENT_CACHE_TTL, json.dumps(res))
+                logger.debug("segmentation redis cache set: %s ttl=%s", key, SEGMENT_CACHE_TTL)
             except Exception:
                 logger.debug("Failed to set redis cache for key=%s", key)
             return res
@@ -141,6 +190,7 @@ def _get_cached_or_compute(state: Any) -> Dict[str, Any]:
             logger.exception("Redis cache access failed, falling back to in-process cache")
 
     # Fallback to in-process lru cache
+    logger.debug("segmentation in-process cache lookup for key=%s", key)
     return _compute_segment_cached(key, serialized)
 
 
