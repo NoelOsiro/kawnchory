@@ -12,7 +12,7 @@ def _as_dict(state: Any) -> Dict:
         return {}
 
 
-def offers_node(state: Any, runtime: Any = None) -> Dict[str, Any]:
+async def offers_node(state: Any, runtime: Any = None) -> Dict[str, Any]:
     """Create simple deterministic offers from `retrieved_docs` and `segment`.
 
     Input (state or dict) keys used:
@@ -57,13 +57,45 @@ def offers_node(state: Any, runtime: Any = None) -> Dict[str, Any]:
             "discount": discount,
             "final_price": final_price,
             "source_doc": doc,
+            "type": "retrieval_offer",
         })
+
+    # If no retrieved docs, provide sensible fallbacks based on segment
+    if not offers:
+        if segment == "recent_buyer":
+            offers = [
+                {
+                    "product_id": "loyalty_1",
+                    "title": "Loyalty Discount",
+                    "price": 0.0,
+                    "discount": 0.2,
+                    "final_price": 0.0,
+                    "source_doc": None,
+                    "type": "loyalty_discount",
+                }
+            ]
+        else:
+            offers = [
+                {
+                    "product_id": "trial_1",
+                    "title": "Free Trial Offer",
+                    "price": 0.0,
+                    "discount": 1.0,
+                    "final_price": 0.0,
+                    "source_doc": None,
+                    "type": "trial_offer",
+                }
+            ]
 
     result = {
         "offers": offers,
         "offers_count": len(offers),
         "routing_hint": "generation",
-        "offers_metadata": {"selected_from_retrieval": len(retrieved), "max_offers": max_offers},
+        "offers_metadata": {
+            "selected_from_retrieval": len(retrieved),
+            "max_offers": max_offers,
+            "source_docs_count": len(retrieved),
+        },
     }
 
     return result
