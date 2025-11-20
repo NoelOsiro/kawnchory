@@ -49,9 +49,12 @@ def route_after_segmentation(state: State):
         The id of the next node: "offers" when state's routing_hint equals "offers",
         otherwise "retrieval".
     """
-    if state.routing_hint == "offers":
-        return "offers"
-    return "retrieval"
+    if isinstance(state, dict):
+        routing_hint = state.get("routing_hint")
+    else:
+        routing_hint = getattr(state, "routing_hint", None)
+
+    return "offers" if routing_hint == "offers" else "retrieval"
 
 graph.add_conditional_edges("segmentation", route_after_segmentation)
 
