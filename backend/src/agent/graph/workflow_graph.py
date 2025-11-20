@@ -1,8 +1,12 @@
-"""Full Workflow Graph.
+"""Full Workflow Graph with factory helpers.
 
-Defines the multi-node retail workflow and routing logic.
+This module exposes factory functions so tests and tools can build fresh
+StateGraph instances or compiled workflows on demand. The module also keeps
+a backward-compatible `workflow` variable for existing importers.
 """
 from __future__ import annotations
+
+from typing import Optional
 
 from langgraph.graph import END, StateGraph
 
@@ -15,55 +19,80 @@ from agent.graph.nodes.safety import safety_node
 from agent.graph.nodes.segmentation import segmentation_node
 from agent.state import State
 
-# Build graph
-graph = StateGraph(State)
 
-# Register nodes
-graph.add_node("segmentation", segmentation_node)
-graph.add_node("retrieval", retrieval_node)
-graph.add_node("offers", offers_node)
-graph.add_node("generation", generation_node)
-graph.add_node("safety", safety_node)
-graph.add_node("hitl", hitl_node)
-graph.add_node("delivery", delivery_node)
+def create_state_graph() -> StateGraph:
+    """Create a fresh, uncompiled StateGraph for the Retail workflow.
 
-
-# Routing
-graph.add_edge("__start__", "segmentation")
-# Add explicit static edges for visualization in the Studio.
-# Keep the conditional routing handler below for runtime decision-making.
-graph.add_edge("segmentation", "offers")
-graph.add_edge("segmentation", "retrieval")
-
-def route_after_segmentation(state: State):
-    """Determine the next workflow node after segmentation.
-
-    Parameters
-    ----------
-    state : State
-        The current workflow state which provides a `routing_hint` attribute.
-
-    Returns:
-    -------
-    str
-        The id of the next node: "offers" when state's routing_hint equals "offers",
-        otherwise "retrieval".
+    Returns a `StateGraph(State)` with all nodes and routing configured. Call
+    `compile()` on the result to get a runnable workflow instance.
     """
-    if isinstance(state, dict):
-        routing_hint = state.get("routing_hint")
-    else:
-        routing_hint = getattr(state, "routing_hint", None)
+    graph = StateGraph(State)
 
-    return "offers" if routing_hint == "offers" else "retrieval"
+    # Register nodes
+    graph.add_node("segmentation", segmentation_node)
+    graph.add_node("retrieval", retrieval_node)
+    graph.add_node("offers", offers_node)
+    graph.add_node("generation", generation_node)
+    graph.add_node("safety", safety_node)
+    graph.add_node("hitl", hitl_node)
+    graph.add_node("delivery", delivery_node)
 
-graph.add_conditional_edges("segmentation", route_after_segmentation)
+    # Routing
+    graph.add_edge("__start__", "segmentation")
+    # Static edges for visualization in the Studio; runtime decision happens via
+    # conditional edges (see route_after_segmentation) but static edges help the
+    # Studio render a full graph.
+    graph.add_edge("segmentation", "offers")
+    graph.add_edge("segmentation", "retrieval")
 
-graph.add_edge("retrieval", "offers")
-graph.add_edge("offers", "generation")
-graph.add_edge("generation", "safety")
-graph.add_edge("safety", "hitl")
-graph.add_edge("hitl", "delivery")
-graph.add_edge("delivery", END)
+    def route_after_segmentation(state: State):
+        if isinstance(state, dict):
+            routing_hint = state.get("routing_hint")
+        else:
+            routing_hint = getattr(state, "routing_hint", None)
+
+        return "offers" if routing_hint == "offers" else "retrieval"
+
+    graph.add_conditional_edges("segmentation", route_after_segmentation)
+
+    graph.add_edge("retrieval", "offers")
+    graph.add_edge("offers", "generation")
+    graph.add_edge("generation", "safety")
+
+    # Static visualization edges and conditional routing after safety
+    graph.add_edge("safety", "hitl")
+    graph.add_edge("safety", "delivery")
+
+    def route_after_safety(state: State):
+        if isinstance(state, dict):
+            routing_hint = state.get("routing_hint")
+        else:
+            routing_hint = getattr(state, "routing_hint", None)
+
+        return "hitl" if routing_hint == "hitl" else "delivery"
+
+    graph.add_conditional_edges("safety", route_after_safety)
+
+    graph.add_edge("hitl", "delivery")
+    graph.add_edge("delivery", END)
+
+    return graph
 
 
-workflow = graph.compile(name="Retail Workflow Graph")
+def create_workflow(compiled: bool = True, name: Optional[str] = "Retail Workflow Graph"):
+    """Create a workflow instance.
+
+    If `compiled` is True (default), returns the compiled workflow (runnable)
+    created by calling `compile(name=...)` on a fresh StateGraph. If False,
+    returns the uncompiled `StateGraph` (useful for tests that want to modify
+    nodes before compile).
+    """
+    graph = create_state_graph()
+    if compiled:
+        return graph.compile(name=name)
+    return graph
+
+
+# Backwards-compatible module-level workflows
+workflow = create_workflow()
+

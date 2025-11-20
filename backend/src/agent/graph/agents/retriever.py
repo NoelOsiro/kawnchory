@@ -32,6 +32,28 @@ def _lookup_by_product_id(product_id: str) -> List[Dict[str, Any]]:
 
 
 def retrieve_citations(customer: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """Retrieve citation documents for a customer's product.
+
+    Parameters
+    ----------
+    customer : Dict[str, Any]
+        Customer object expected to contain an optional "properties" mapping
+        with a "product_id" key used to look up citations.
+
+    Returns:
+    -------
+    List[Dict[str, Any]]
+        A list of citation documents (possibly empty) matching the customer's
+        product_id. The function first attempts to use an optional vector DB
+        hook (agent.services.vector_db.query_by_product_id) and falls back to
+        a small in-memory index used for tests and development.
+
+    Notes:
+    -----
+    Any exceptions raised while attempting to import or call the optional
+    vector DB hook are suppressed and the in-memory lookup is used as a
+    fallback.
+    """
     if not customer:
         return []
 

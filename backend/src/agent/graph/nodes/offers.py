@@ -1,64 +1,69 @@
-from __future__ import annotations
-
+"""Offers node: build structured offers from retrieval results and segmentation."""
 from typing import Any, Dict, List
 
-from langgraph.runtime import Runtime
 
-from agent.state import State
-
-
-async def offers_node(state: State | Dict[str, Any], runtime: Runtime) -> Dict[str, Any]:
-    """Generate simple, deterministic offers based on segment and retrieved docs.
-
-    This implementation is intentionally simple and deterministic for tests.
-    Production should replace this with a business-driven offers engine.
-    """
-
-    # Extract segment and retrieved docs from either State or dict
+def _as_dict(state: Any) -> Dict:
     if isinstance(state, dict):
-        segment = state.get("segment")
-        retrieved = state.get("retrieved_docs") or []
-    else:
-        segment = getattr(state, "segment", None)
-        retrieved = getattr(state, "retrieved_docs", None) or []
+        return state
+    # minimal State-compatible adapter: try mapping-like access
+    try:
+        return dict(state.__dict__)
+    except Exception:
+        return {}
 
-    offers: List[Dict[str, Any]] = []
 
-    # Generate document recommendation offers from retrieved docs
-    for doc in retrieved:
-        offers.append(
-            {
-                "id": f"offer_doc_{doc.get('id')}",
-                "type": "doc_recommendation",
-                "title": doc.get("title") or "Recommended",
-                "summary": (doc.get("content") or "").strip()[:200],
-                "source": doc.get("source"),
-            }
-        )
+def offers_node(state: Any, runtime: Any = None) -> Dict[str, Any]:
+    """Create simple deterministic offers from `retrieved_docs` and `segment`.
 
-    # Segment-specific offers
-    if not offers:
+    Input (state or dict) keys used:
+    - `retrieved_docs`: list of dicts with keys like `id`, `title`, `price`
+    - `segment`: segmentation label (string)
+
+    Output:
+    - `offers`: list of offer dicts
+    - `offers_count`: int
+    - `routing_hint`: next node hint (defaults to `generation`)
+    - `offers_metadata`: small summary
+    """
+    s = _as_dict(state)
+    retrieved: List[Dict] = s.get("retrieved_docs") or []
+    segment: str = s.get("segment") or getattr(state, "segment", "new_or_casual")
+
+    # choose top N deterministic (first N)
+    max_offers = 3
+    chosen = retrieved[:max_offers]
+
+    offers: List[Dict] = []
+    for doc in chosen:
+        pid = doc.get("id") or doc.get("product_id") or "unknown"
+        title = doc.get("title") or doc.get("name") or "Product"
+        price = doc.get("price") if doc.get("price") is not None else 9.99
+
+        # simple personalization rules
+        discount = 0.0
         if segment == "recent_buyer":
-            offers.append(
-                {
-                    "id": "offer_loyalty_1",
-                    "type": "loyalty_discount",
-                    "title": "Thank you — enjoy 10% off",
-                    "summary": "Loyalty discount for recent buyers",
-                    "source": "promotions",
-                }
-            )
+            discount = 0.05
         elif segment == "frequent_browser":
-            offers.append(
-                {
-                    "id": "offer_trial_1",
-                    "type": "trial_offer",
-                    "title": "Try premium features",
-                    "summary": "Special trial for frequent browsers",
-                    "source": "promotions",
-                }
-            )
+            discount = 0.10
+        elif segment == "cart_abandoned":
+            discount = 0.15
 
-    offers_metadata = {"segment": segment, "offers_count": len(offers), "source_docs_count": len(retrieved)}
+        final_price = round(max(0.0, price * (1 - discount)), 2)
 
-    return {"offers": offers, "offers_metadata": offers_metadata}
+        offers.append({
+            "product_id": pid,
+            "title": title,
+            "price": price,
+            "discount": discount,
+            "final_price": final_price,
+            "source_doc": doc,
+        })
+
+    result = {
+        "offers": offers,
+        "offers_count": len(offers),
+        "routing_hint": "generation",
+        "offers_metadata": {"selected_from_retrieval": len(retrieved), "max_offers": max_offers},
+    }
+
+    return result

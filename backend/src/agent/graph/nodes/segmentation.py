@@ -8,11 +8,21 @@ upstream workflow routing.
 
 from __future__ import annotations
 
+import logging
+import os
 from typing import Any, Dict, List
 
 from langgraph.runtime import Runtime
 
 from agent.state import State
+
+
+# Configuration: make thresholds tunable via env vars for quick tuning without code changes
+VIEWS_THRESHOLD = int(os.getenv("SEGMENT_VIEWS_THRESHOLD", "10"))
+PURCHASES_THRESHOLD = int(os.getenv("SEGMENT_PURCHASES_THRESHOLD", "1"))
+
+
+logger = logging.getLogger(__name__)
 
 
 async def segmentation_node(state: State | Dict[str, Any], runtime: Runtime) -> Dict[str, Any]:
@@ -28,7 +38,11 @@ async def segmentation_node(state: State | Dict[str, Any], runtime: Runtime) -> 
     - form_abandoned / cart_abandoned: last_event indicates abandonment
     - new_or_casual: fallback
     """
-    # Support both State objects and plain dicts for easy testing.
+    # Support both State objects and plain dicts for easy testing. Validate early.
+    if state is None:
+        logger.debug("segmentation_node called with state=None, treating as empty dict")
+        state = {}
+
     behavior = (
         getattr(state, "behavior_summary", None)
         if hasattr(state, "behavior_summary")
@@ -42,23 +56,24 @@ async def segmentation_node(state: State | Dict[str, Any], runtime: Runtime) -> 
     else:
         last_event = getattr(state, "last_event", None) or (getattr(state, "customer_profile", {}) or {}).get("last_event")
 
-    # Normalize numeric values
-    try:
-        views = int(behavior.get("views_last_7d", 0) or 0)
-    except Exception:
-        views = 0
-    try:
-        purchases = int(behavior.get("purchases_last_30d", 0) or 0)
-    except Exception:
-        purchases = 0
+    # Normalize numeric values defensively: malformed values treated as 0
+    def _to_int(value: Any, default: int = 0) -> int:
+        try:
+            return int(value or 0)
+        except Exception:
+            logger.debug("Failed to parse int from value=%r, defaulting to %d", value, default)
+            return default
+
+    views = _to_int(behavior.get("views_last_7d", 0), 0)
+    purchases = _to_int(behavior.get("purchases_last_30d", 0), 0)
 
     reasons: List[str] = []
     routing_hint = None
 
-    if purchases > 0:
+    if purchases >= PURCHASES_THRESHOLD:
         segment = "recent_buyer"
         reasons.append(f"purchases_last_30d={purchases}")
-    elif views >= 10 and purchases == 0:
+    elif views >= VIEWS_THRESHOLD and purchases < PURCHASES_THRESHOLD:
         segment = "frequent_browser"
         reasons.append(f"views_last_7d={views}")
         reasons.append("no_recent_purchases")
@@ -73,15 +88,24 @@ async def segmentation_node(state: State | Dict[str, Any], runtime: Runtime) -> 
         segment = "new_or_casual"
         reasons.append("no_significant_activity")
 
-    # Provide a compact metadata object for observability
+    # Log the decision for observability (debug/info depending on environment)
+    logger.info(
+        "segmentation decision: segment=%s views=%d purchases=%d rule=%s",
+        segment,
+        views,
+        purchases,
+        "recent_buyer" if purchases >= PURCHASES_THRESHOLD else ("views_high_no_purchases" if views >= VIEWS_THRESHOLD else ("abandonment_detected" if "abandon" in " ".join(reasons) else "default")),
+    )
+
     segment_metadata = {
         "rule_applied": (
             "purchases_present"
-            if purchases > 0
-            else ("views_high_no_purchases" if views >= 10 else ("abandonment_detected" if "abandon" in " ".join(reasons) else "default"))
+            if purchases >= PURCHASES_THRESHOLD
+            else ("views_high_no_purchases" if views >= VIEWS_THRESHOLD else ("abandonment_detected" if "abandon" in " ".join(reasons) else "default"))
         ),
         "views_last_7d": views,
         "purchases_last_30d": purchases,
+        "config": {"views_threshold": VIEWS_THRESHOLD, "purchases_threshold": PURCHASES_THRESHOLD},
     }
 
     return {
