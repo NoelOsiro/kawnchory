@@ -7,27 +7,24 @@ approved or rejected.
 """
 from typing import Any, Dict
 
-from agent.services.hitl_queue import enqueue_review
-from agent.services.hitl_queue import get_review
+from agent.services.hitl_queue import enqueue_review, get_review
 
 
-# In test environments we can auto-approve pending reviews to progress flows.
-def _maybe_auto_approve_and_fetch(review_id: int):
+def _maybe_fetch_existing_review_result(review_id: int):
+    """Fetch an existing review result if present without triggering.
+
+    any auto-approval side-effects. Tests or other helpers may approve
+    reviews separately; this function only reads the stored result.
+    """
     try:
-        from agent.services.hitl_test_helper import auto_approve_pending
-
-        # Auto-approve pending reviews (test helper will be no-op if none)
-        auto_approve_pending()
         rev = get_review(review_id)
-        if rev is not None:
-            # result_json was stored as JSON string; try to parse
+        if rev is not None and rev.get("result_json"):
             try:
                 import json
 
-                res = json.loads(rev.get("result_json") or "null")
+                return json.loads(rev.get("result_json"))
             except Exception:
-                res = rev.get("result_json")
-            return res
+                return rev.get("result_json")
     except Exception:
         return None
 
@@ -48,10 +45,42 @@ def hitl_node(state: Any, runtime: Any = None) -> Dict[str, Any]:
             payload = {"state_repr": str(state)}
 
     review_id = enqueue_review(payload)
-    # Attempt to auto-approve in test contexts and include the human review
-    human_review = _maybe_auto_approve_and_fetch(review_id)
-    out = {"review_id": review_id, "status": "pending"}
-    if human_review is not None:
-        out["human_review"] = human_review
-    return out
+    # Do not auto-approve here; tests are responsible for invoking the
+    # test-helper auto-approve when needed. We will, however, include an
+    # existing human review result if one is already present.
+    human_review = _maybe_fetch_existing_review_result(review_id)
+    rev = get_review(review_id)
+    status = rev.get("status") if rev is not None else "pending"
+
+    # Mutate the received state in-place when possible so the runtime's
+    # state object seen by downstream nodes includes the review metadata.
+    try:
+        if isinstance(state, dict):
+            state["review_id"] = review_id
+            state["status"] = status
+            if human_review is not None:
+                state["human_review"] = human_review
+            return state
+        else:
+            # Try to set attributes on a state-like object
+            try:
+                setattr(state, "review_id", review_id)
+                setattr(state, "status", status)
+                if human_review is not None:
+                    setattr(state, "human_review", human_review)
+                return state
+            except Exception:
+                # Fall back to returning a dict copy if we cannot mutate
+                out_state = dict(getattr(state, "__dict__", {}))
+                out_state["review_id"] = review_id
+                out_state["status"] = status
+                if human_review is not None:
+                    out_state["human_review"] = human_review
+                return out_state
+    except Exception:
+        # As a last resort, return a minimal dict with review info
+        out = {"review_id": review_id, "status": status}
+        if human_review is not None:
+            out["human_review"] = human_review
+        return out
 

@@ -15,11 +15,17 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 
-DEFAULT_DB = Path(os.environ.get("HITL_DB_PATH") or Path.cwd() / ".hitl_reviews.db")
-
-
 def _get_conn(db_path: Optional[Path] = None) -> sqlite3.Connection:
-    path = db_path or DEFAULT_DB
+    # Resolve DB path at call time so tests can monkeypatch `HITL_DB_PATH`
+    env_path = os.environ.get("HITL_DB_PATH")
+    if db_path is not None:
+        path = Path(db_path)
+    elif env_path:
+        path = Path(env_path)
+    else:
+        # Use a repository-local default path (stable across CWD changes)
+        path = Path(__file__).resolve().parents[3] / ".hitl_reviews.db"
+
     path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(path))
     conn.row_factory = sqlite3.Row
