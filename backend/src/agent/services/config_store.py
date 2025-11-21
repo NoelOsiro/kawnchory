@@ -13,7 +13,7 @@ import logging
 import os
 from typing import Any, Callable, Dict
 
-from sqlalchemy import JSON, TIMESTAMP, Boolean, Column, String, func, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 

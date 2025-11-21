@@ -11,6 +11,27 @@ from langgraph.graph import END, START, StateGraph
 # Config-driven wiring
 from agent.services import config_store
 
+# Require jsonlogic for routing rule evaluation. Prefer the `jsonlogic`
+# package API but also accept the `json_logic` package (different naming).
+try:
+    from jsonlogic import jsonlogic as _jsonlogic
+except Exception:
+    try:
+        # Some environments install the package named `json-logic` which
+        # exposes a `jsonLogic` function in the `json_logic` module. Wrap it
+        # so callers can use `_jsonlogic(expr, data)` uniformly.
+        import json_logic as _jl
+
+        def _jsonlogic(expr, data=None):
+            return _jl.jsonLogic(expr, data)
+
+    except Exception as exc:  # pragma: no cover - startup failure if missing
+        raise ImportError(
+            "The 'jsonlogic' package is required for routing rule evaluation. "
+            "Install it with 'pip install jsonlogic' or 'pip install json-logic', "
+            "or add it to your environment (see backend/requirements.txt)."
+        ) from exc
+
 from agent.graph.nodes.behavior_segmentation import behavior_seg
 from agent.graph.nodes.context_inspection import context_inspection
 from agent.graph.nodes.delivery import delivery_node
@@ -127,14 +148,37 @@ def create_state_graph(enabled_segments: set | None = None, configs: dict | None
     # matches the logical source (e.g., 'context_inspection' or 'segment_merge')
     # and all key/value pairs in `condition` equal values in the state.
     def _match_rules_for_source(source_key: str, state: State):
-        rules = []
-        if configs:
-            rules = configs.get("routing_rules", [])
+        """Match routing rules for a given source against the current state.
+
+        This implementation requires the `jsonlogic` package (imported at
+        module import time). Rules' `condition` fields are evaluated against a
+        mapping view of the runtime state using `jsonlogic.jsonlogic(cond, data)`.
+        The first truthy rule wins and its `target_node` is returned.
+        """
+        if configs is None:
+            return None
+
+        # Convert state to a plain mapping for jsonlogic evaluation
+        if isinstance(state, dict):
+            data = state
+        else:
+            data = {}
+            for k in dir(state):
+                if k.startswith("_"):
+                    continue
+                try:
+                    v = getattr(state, k)
+                except Exception:
+                    continue
+                if callable(v):
+                    continue
+                data[k] = v
+
+        rules = configs.get("routing_rules", [])
         for r in rules:
             if not r.get("enabled", True):
                 continue
             src = r.get("source_node")
-            # accept common alias 'seg' for 'segment_merge'
             if source_key == "segment_merge" and src in ("segment_merge", "seg"):
                 pass
             elif source_key == "context_inspection" and src in ("context_inspection", "inspection"):
@@ -143,18 +187,12 @@ def create_state_graph(enabled_segments: set | None = None, configs: dict | None
                 continue
 
             cond = r.get("condition") or {}
-            match = True
-            for k, v in cond.items():
-                if isinstance(state, dict):
-                    if state.get(k) != v:
-                        match = False
-                        break
-                else:
-                    if getattr(state, k, None) != v:
-                        match = False
-                        break
-            if match:
-                return r.get("target_node")
+            try:
+                if _jsonlogic(cond, data):
+                    return r.get("target_node")
+            except Exception:
+                # If a rule's expression errors, skip it rather than crash
+                continue
         return None
 
     # Ensure the route function has a stable name for Studio drawing

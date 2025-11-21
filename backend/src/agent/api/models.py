@@ -23,6 +23,11 @@ Base = declarative_base()
 
 
 class SegmentorConfig(Base):
+    """_summary_.
+
+    Args:
+        Base (_type_): _description_
+    """
     __tablename__ = "segmentor_configs"
 
     segmentor_name = Column(String, primary_key=True)
@@ -32,6 +37,11 @@ class SegmentorConfig(Base):
 
 
 class RoutingRule(Base):
+    """_summary_.
+
+    Args:
+        Base (_type_): _description_.
+    """
     __tablename__ = "routing_rules"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -43,6 +53,11 @@ class RoutingRule(Base):
 
 
 class NodeConfig(Base):
+    """_summary_.
+
+    Args:
+        Base (_type_): _description_.
+    """
     __tablename__ = "node_configs"
 
     name = Column(String, primary_key=True)
@@ -51,6 +66,11 @@ class NodeConfig(Base):
 
 
 class RAGRetrievalConfig(Base):
+    """_summary_.
+
+    Args:
+        Base (_type_): _description_.
+    """
     __tablename__ = "rag_retrieval_configs"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -65,6 +85,11 @@ class RAGRetrievalConfig(Base):
 
 
 class OffersConfig(Base):
+    """_summary_.
+
+    Args:
+        Base (_type_): _description_.
+    """
     __tablename__ = "offers_configs"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -76,6 +101,11 @@ class OffersConfig(Base):
 
 
 class SafetyConfig(Base):
+    """_summary_.
+
+    Args:
+        Base (_type_): _description_.
+    """
     __tablename__ = "safety_configs"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -87,6 +117,11 @@ class SafetyConfig(Base):
 
 
 class GenerationConfig(Base):
+    """_summary_.
+
+    Args:
+        Base (_type_): _description_.
+    """
     __tablename__ = "generation_configs"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -98,6 +133,11 @@ class GenerationConfig(Base):
 
 
 class DeliveryConfig(Base):
+    """_summary_.
+
+    Args:
+        Base (_type_): _description_.
+    """
     __tablename__ = "delivery_configs"
 
     id = Column(Integer, primary_key=True, autoincrement=True)

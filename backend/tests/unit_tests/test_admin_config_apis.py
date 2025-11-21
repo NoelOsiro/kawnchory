@@ -1,5 +1,3 @@
-import os
-
 
 def test_admin_config_crud(tmp_path, monkeypatch):
     db_path = tmp_path / "segstore2.db"
