@@ -43,17 +43,17 @@ export function OverviewBookingView() {
     <DashboardContent maxWidth="xl">
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 4 }}>
-          <BookingWidgetSummary
-            title="Total Active Users"
-            percent={0}
-            total={totalActive}
-            icon={<BookingIllustration />}
-          />
+                <BookingWidgetSummary
+                  title="Total Segments"
+                  percent={0}
+                  total={totalActive}
+                  icon={<BookingIllustration />}
+                />
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }}>
           <BookingWidgetSummary
-            title="PPPoE Users"
+            title="Rule-based Segments"
             percent={0}
             total={totalPPPoE}
             icon={<CheckInIllustration />}
@@ -62,7 +62,7 @@ export function OverviewBookingView() {
 
         <Grid size={{ xs: 12, md: 4 }}>
           <BookingWidgetSummary
-            title="Hotspot Users"
+            title="Experiment Segments"
             percent={0}
             total={totalHotspot}
             icon={<CheckoutIllustration />}
@@ -93,7 +93,7 @@ export function OverviewBookingView() {
                 }}
               >
                 <BookingTotalIncomes
-                  title="Total users"
+                  title="Total segments"
                   total={totalActive}
                   percent={2.6}
                   chart={{
@@ -103,7 +103,7 @@ export function OverviewBookingView() {
                 />
 
                 <BookingBooked
-                  title="Status"
+                  title="Segment Status"
                   data={_bookingsOverview}
                   sx={{ boxShadow: { md: 'none' } }}
                 />
@@ -112,8 +112,8 @@ export function OverviewBookingView() {
               <BookingCheckInWidgets
                 chart={{
                   series: [
-                    { label: 'PPoE Users', percent: 73.9, total: 38566 },
-                    { label: 'Hotspot Users', percent: 45.6, total: 18472 },
+                    { label: 'Rule-based Segments', percent: 73.9, total: 38566 },
+                    { label: 'Experiment Segments', percent: 45.6, total: 18472 },
                   ],
                 }}
                 sx={{ boxShadow: { md: 'none' } }}
@@ -155,19 +155,19 @@ export function OverviewBookingView() {
 
           <Grid size={{ xs: 12, md: 5, lg: 4 }}>
             <Box sx={{ gap: 3, display: 'flex', flexDirection: 'column' }}>
-              <BookingAvailable
-                title="Tours available"
-                chart={{
-                  series: [
-                    { label: 'Sold out', value: 120 },
-                    { label: 'Available', value: 66 },
-                  ],
-                }}
-              />
+                {/* <BookingAvailable
+                  title="Segment Configs"
+                  chart={{
+                    series: [
+                      { label: 'Active', value: 120 },
+                      { label: 'Inactive', value: 66 },
+                    ],
+                  }}
+                /> */}
 
               <BookingCustomerReviews
-                title="Customer reviews"
-                subheader={`${_bookingReview.length} Reviews`}
+                title="Audit entries"
+                subheader={`${_bookingReview.length} entries`}
                 list={_bookingReview}
               />
             </Box>
@@ -176,21 +176,21 @@ export function OverviewBookingView() {
 
         <Grid size={12}>
           <BookingNewest
-            title="Newest booking"
-            subheader={`${_bookingNew.length} bookings`}
+            title="Newest segments"
+            subheader={`${_bookingNew.length} segments`}
             list={_bookingNew}
           />
         </Grid>
 
         <Grid size={12}>
           <BookingDetails
-            title="Booking details"
+            title="Segment details"
             tableData={_bookings}
             headCells={[
-              { id: 'destination', label: 'Destination' },
-              { id: 'customer', label: 'Customer' },
-              { id: 'checkIn', label: 'Check in' },
-              { id: 'checkOut', label: 'Check out' },
+              { id: 'segmentId', label: 'Segment ID' },
+              { id: 'name', label: 'Name' },
+              { id: 'rule', label: 'Rule' },
+              { id: 'created', label: 'Created' },
               { id: 'status', label: 'Status' },
               { id: '' },
             ]}

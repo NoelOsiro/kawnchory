@@ -70,19 +70,19 @@ export const navData: NavSectionProps['data'] = [
         path: paths.dashboard.customer.root,
         icon: ICONS.user,
         children: [
-          { title: 'Overview', path: paths.dashboard.customer.root },
-          { title: 'List', path: paths.dashboard.customer.list },
+          { title: 'Segments Overview', path: paths.dashboard.segments.root },
+          { title: 'Segments List', path: paths.dashboard.segments.list },
         ],
       },
       {
         title: 'Retrievers',
-        path: paths.dashboard.equipment.root,
+        path: paths.dashboard.retrievers.root,
         icon: ICONS.user,
         children: [
-          { title: 'Overview', path: paths.dashboard.equipment.root },
-          { title: 'All', path: paths.dashboard.equipment.cards },
-          { title: 'List', path: paths.dashboard.equipment.list },
-          { title: 'Create', path: paths.dashboard.equipment.new },
+          { title: 'Retrievers Overview', path: paths.dashboard.retrievers.root },
+          { title: 'Retrievers All', path: paths.dashboard.retrievers.cards },
+          { title: 'Retrievers List', path: paths.dashboard.retrievers.list },
+          { title: 'Create Retriever', path: paths.dashboard.retrievers.new },
         ],
       },
     ],
@@ -92,41 +92,41 @@ export const navData: NavSectionProps['data'] = [
     items: [
       {
         title: 'Safety',
-        path: paths.dashboard.user.root,
+        path: paths.dashboard.safety.root,
         icon: ICONS.user,
         children: [
-          { title: 'Policy', path: paths.dashboard.user.root },
-          { title: 'Rules', path: paths.dashboard.user.cards },
-          { title: 'List', path: paths.dashboard.user.list },
-          { title: 'Create', path: paths.dashboard.user.new },
-          { title: 'Edit', path: paths.dashboard.user.demo.edit },
-          { title: 'Account', path: paths.dashboard.user.account },
+          { title: 'Safety Policies', path: paths.dashboard.safety.root },
+          { title: 'Safety Rules', path: paths.dashboard.safety.cards },
+          { title: 'Safety List', path: paths.dashboard.safety.list },
+          { title: 'Create Safety', path: paths.dashboard.safety.new },
+          { title: 'Edit Safety', path: paths.dashboard.safety.demo.edit },
+          { title: 'Safety Account', path: paths.dashboard.safety.account },
         ],
       },
       {
         title: 'Routing',
-        path: paths.dashboard.user.root,
+        path: paths.dashboard.routing.root,
         icon: ICONS.user,
         children: [
-          { title: 'Policy', path: paths.dashboard.user.root },
-          { title: 'Rules', path: paths.dashboard.user.cards },
-          { title: 'List', path: paths.dashboard.user.list },
-          { title: 'Create', path: paths.dashboard.user.new },
-          { title: 'Edit', path: paths.dashboard.user.demo.edit },
-          { title: 'Account', path: paths.dashboard.user.account },
+          { title: 'Routing Policies', path: paths.dashboard.routing.root },
+          { title: 'Routing Rules', path: paths.dashboard.routing.cards },
+          { title: 'Routing List', path: paths.dashboard.routing.list },
+          { title: 'Create Routing', path: paths.dashboard.routing.new },
+          { title: 'Edit Routing', path: paths.dashboard.routing.demo.edit },
+          { title: 'Routing Account', path: paths.dashboard.routing.account },
         ],
       },
       {
         title: 'Generation',
-        path: paths.dashboard.payment.root,
+        path: paths.dashboard.generation.root,
         icon: ICONS.user,
         children: [
-          { title: 'Overview', path: paths.dashboard.payment.root },
-          { title: 'Templates', path: paths.dashboard.payment.cards },
-          { title: 'List', path: paths.dashboard.payment.list },
-          { title: 'Create', path: paths.dashboard.payment.new },
-          { title: 'Edit', path: paths.dashboard.payment.demo.edit },
-          { title: 'Account', path: paths.dashboard.payment.account },
+          { title: 'Generation Overview', path: paths.dashboard.generation.root },
+          { title: 'Generation Templates', path: paths.dashboard.generation.cards },
+          { title: 'Generation List', path: paths.dashboard.generation.list },
+          { title: 'Create Template', path: paths.dashboard.generation.new },
+          { title: 'Edit Template', path: paths.dashboard.generation.demo.edit },
+          { title: 'Generation Account', path: paths.dashboard.generation.account },
         ],
       },
     ],
@@ -136,110 +136,22 @@ export const navData: NavSectionProps['data'] = [
     items: [
       {
         title: 'Delivery',
-        path: paths.dashboard.package.root,
+        path: paths.dashboard.delivery.root,
         icon: ICONS.file,
         children: [
-          { title: 'All', path: paths.dashboard.package.cards },
-          { title: 'List', path: paths.dashboard.package.list },
+          { title: 'Delivery All', path: paths.dashboard.delivery.cards },
+          { title: 'Delivery List', path: paths.dashboard.delivery.list },
         ],
       },
       {
         title: 'Offers',
-        path: paths.dashboard.voucher.root,
+        path: paths.dashboard.offers.root,
         icon: ICONS.user,
         children: [
-          { title: 'Overview', path: paths.dashboard.voucher.root },
-          { title: 'List', path: paths.dashboard.voucher.list },
+          { title: 'Offers Overview', path: paths.dashboard.offers.root },
+          { title: 'Offers List', path: paths.dashboard.offers.list },
         ],
       },
     ],
   },
-  // /**
-  //  * Item State
-  //  */
-  // {
-  //   subheader: 'Misc',
-  //   items: [
-  //     {
-  //       // default roles : All roles can see this entry.
-  //       // roles: ['user'] Only users can see this item.
-  //       // roles: ['admin'] Only admin can see this item.
-  //       // roles: ['admin', 'manager'] Only admin/manager can see this item.
-  //       // Reference from 'src/guards/RoleBasedGuard'.
-  //       title: 'Permission',
-  //       path: paths.dashboard.permission,
-  //       icon: ICONS.lock,
-  //       roles: ['admin', 'manager'],
-  //       caption: 'Only admin can see this item',
-  //     },
-  //     {
-  //       title: 'Level',
-  //       path: '#/dashboard/menu_level',
-  //       icon: ICONS.menuItem,
-  //       children: [
-  //         {
-  //           title: 'Level 1a',
-  //           path: '#/dashboard/menu_level/menu_level_1a',
-  //           children: [
-  //             { title: 'Level 2a', path: '#/dashboard/menu_level/menu_level_1a/menu_level_2a' },
-  //             {
-  //               title: 'Level 2b',
-  //               path: '#/dashboard/menu_level/menu_level_1a/menu_level_2b',
-  //               children: [
-  //                 {
-  //                   title: 'Level 3a',
-  //                   path: '#/dashboard/menu_level/menu_level_1a/menu_level_2b/menu_level_3a',
-  //                 },
-  //                 {
-  //                   title: 'Level 3b',
-  //                   path: '#/dashboard/menu_level/menu_level_1a/menu_level_2b/menu_level_3b',
-  //                 },
-  //               ],
-  //             },
-  //           ],
-  //         },
-  //         { title: 'Level 1b', path: '#/dashboard/menu_level/menu_level_1b' },
-  //       ],
-  //     },
-  //     {
-  //       title: 'Disabled',
-  //       path: '#disabled',
-  //       icon: ICONS.disabled,
-  //       disabled: true,
-  //     },
-  //     {
-  //       title: 'Label',
-  //       path: '#label',
-  //       icon: ICONS.label,
-  //       info: (
-  //         <Label
-  //           color="info"
-  //           variant="inverted"
-  //           startIcon={<Iconify icon="solar:bell-bing-bold-duotone" />}
-  //         >
-  //           NEW
-  //         </Label>
-  //       ),
-  //     },
-  //     {
-  //       title: 'Caption',
-  //       path: '#caption',
-  //       icon: ICONS.menuItem,
-  //       caption:
-  //         'Quisque malesuada placerat nisl. In hac habitasse platea dictumst. Cras id dui. Pellentesque commodo eros a enim. Morbi mollis tellus ac sapien.',
-  //     },
-  //     {
-  //       title: 'Params',
-  //       path: '/dashboard/params?id=e99f09a7-dd88-49d5-b1c8-1daf80c2d7b1',
-  //       icon: ICONS.parameter,
-  //     },
-  //     {
-  //       title: 'External link',
-  //       path: 'https://www.google.com/',
-  //       icon: ICONS.external,
-  //       info: <Iconify width={18} icon="prime:external-link" />,
-  //     },
-  //     { title: 'Blank', path: paths.dashboard.blank, icon: ICONS.blank },
-  //   ],
-  // },
 ];

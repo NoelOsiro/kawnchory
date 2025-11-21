@@ -70,7 +70,7 @@ const TABLE_HEAD: TableHeadCellProps[] = [
 // ----------------------------------------------------------------------
 
 
-export function CustomerListView() {
+export function SegmentListView() {
   const table = useTable();
   const confirmDialog = useBoolean();
   const filters = useSetState<ICustomerTableFilters>({
@@ -80,15 +80,6 @@ export function CustomerListView() {
   });
   const { state: currentFilters, setState: updateFilters } = filters;
 
-  // Use customer store
-
-  // const { customers, fetchCustomers, loading, error, deleteCustomer } = useCustomerStore((state) => ({
-  //   customers: state.customers,
-  //   fetchCustomers: state.fetchCustomers,
-  //   loading: state.loading,
-  //   error: state.error,
-  //   deleteCustomer: state.deleteCustomer,
-  // }));
   const customers = useCustomerStore((state) => state.customers);
   const fetchCustomers = useCustomerStore((state) => state.fetchCustomers);
   const loading = useCustomerStore((state) => state.loading);

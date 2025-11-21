@@ -11,7 +11,7 @@ import type { NavMainProps } from './main/nav/types';
 export const navData: NavMainProps['data'] = [
   { title: 'Home', path: '/', icon: <Iconify width={22} icon="solar:home-2-bold-duotone" /> },
   {
-    title: 'Components',
+    title: 'Configurations',
     path: paths.components,
     icon: <Iconify width={22} icon="solar:atom-bold-duotone" />,
   },

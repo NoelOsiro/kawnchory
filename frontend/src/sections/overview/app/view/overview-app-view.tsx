@@ -12,7 +12,7 @@ import { SeoIllustration } from 'src/assets/illustrations';
 
 import { svgColorClasses } from 'src/components/svg-color';
 
-import { useAuthContext } from 'src/auth/hooks';
+import { useMockedUser } from 'src/auth/hooks';
 
 import { AppWidget } from '../app-widget';
 import { AppWelcome } from '../app-welcome';
@@ -26,7 +26,7 @@ import { AppCurrentDownload } from '../app-current-download';
 // ----------------------------------------------------------------------
 
 export function OverviewAppView() {
-  const { user } = useAuthContext();
+  const { user } = useMockedUser();
 
   const { leave_requests } = useDashStore();
 
@@ -37,7 +37,7 @@ export function OverviewAppView() {
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 8 }}>
           <AppWelcome
-            title={`Welcome back 👋 \n ${user?.first_name} ${user?.last_name}`}
+            title={`Welcome back 👋 \n ${user?.displayName}`}
             description="Fill your Profile to get started"
             img={<SeoIllustration hideBackground />}
             action={
