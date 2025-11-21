@@ -63,48 +63,40 @@ export const navData: NavSectionProps['data'] = [
    * Management
    */
   {
-    subheader: 'Management',
+    subheader: 'Configurations',
     items: [
       {
-        title: 'Customers',
+        title: 'Segments',
         path: paths.dashboard.customer.root,
         icon: ICONS.user,
         children: [
-          // { title: 'Profile', path: paths.dashboard.user.root },
-          // { title: 'Cards', path: paths.dashboard.user.cards },
-          { title: 'Summary', path: paths.dashboard.customer.root },
+          { title: 'Overview', path: paths.dashboard.customer.root },
           { title: 'List', path: paths.dashboard.customer.list },
-          // { title: 'Create', path: paths.dashboard.user.new },
-          // { title: 'Edit', path: paths.dashboard.customer.demo.edit },
-          // { title: 'Account', path: paths.dashboard.customer.account },
         ],
       },
       {
-        title: 'Equipment',
+        title: 'Retrievers',
         path: paths.dashboard.equipment.root,
         icon: ICONS.user,
         children: [
-          { title: 'Profile', path: paths.dashboard.equipment.root },
+          { title: 'Overview', path: paths.dashboard.equipment.root },
           { title: 'All', path: paths.dashboard.equipment.cards },
           { title: 'List', path: paths.dashboard.equipment.list },
           { title: 'Create', path: paths.dashboard.equipment.new },
-          // { title: 'Edit', path: paths.dashboard.equipment.demo.edit },
-          // { title: 'Account', path: paths.dashboard.equipment.account },
         ],
       },
-      
     ],
   },
   {
-    subheader: 'Management',
+    subheader: 'Policies',
     items: [
       {
-        title: 'Support',
+        title: 'Safety',
         path: paths.dashboard.user.root,
         icon: ICONS.user,
         children: [
-          { title: 'Profile', path: paths.dashboard.user.root },
-          { title: 'Cards', path: paths.dashboard.user.cards },
+          { title: 'Policy', path: paths.dashboard.user.root },
+          { title: 'Rules', path: paths.dashboard.user.cards },
           { title: 'List', path: paths.dashboard.user.list },
           { title: 'Create', path: paths.dashboard.user.new },
           { title: 'Edit', path: paths.dashboard.user.demo.edit },
@@ -112,12 +104,12 @@ export const navData: NavSectionProps['data'] = [
         ],
       },
       {
-        title: 'Tickets',
+        title: 'Routing',
         path: paths.dashboard.user.root,
         icon: ICONS.user,
         children: [
-          { title: 'Profile', path: paths.dashboard.user.root },
-          { title: 'Cards', path: paths.dashboard.user.cards },
+          { title: 'Policy', path: paths.dashboard.user.root },
+          { title: 'Rules', path: paths.dashboard.user.cards },
           { title: 'List', path: paths.dashboard.user.list },
           { title: 'Create', path: paths.dashboard.user.new },
           { title: 'Edit', path: paths.dashboard.user.demo.edit },
@@ -125,12 +117,12 @@ export const navData: NavSectionProps['data'] = [
         ],
       },
       {
-        title: 'Payments',
+        title: 'Generation',
         path: paths.dashboard.payment.root,
         icon: ICONS.user,
         children: [
           { title: 'Overview', path: paths.dashboard.payment.root },
-          { title: 'Cards', path: paths.dashboard.payment.cards },
+          { title: 'Templates', path: paths.dashboard.payment.cards },
           { title: 'List', path: paths.dashboard.payment.list },
           { title: 'Create', path: paths.dashboard.payment.new },
           { title: 'Edit', path: paths.dashboard.payment.demo.edit },
@@ -140,10 +132,10 @@ export const navData: NavSectionProps['data'] = [
     ],
   },
   {
-    subheader: 'Management',
+    subheader: 'Integrations',
     items: [
       {
-        title: 'Packages',
+        title: 'Delivery',
         path: paths.dashboard.package.root,
         icon: ICONS.file,
         children: [
@@ -152,15 +144,12 @@ export const navData: NavSectionProps['data'] = [
         ],
       },
       {
-        title: 'Vouchers',
+        title: 'Offers',
         path: paths.dashboard.voucher.root,
         icon: ICONS.user,
         children: [
           { title: 'Overview', path: paths.dashboard.voucher.root },
           { title: 'List', path: paths.dashboard.voucher.list },
-          // { title: 'Create', path: paths.dashboard.voucher.new },
-          // { title: 'Edit', path: paths.dashboard.voucher.demo.edit },
-          // { title: 'Account', path: paths.dashboard.voucher.account },
         ],
       },
     ],

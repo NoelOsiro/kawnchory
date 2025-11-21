@@ -44,7 +44,7 @@ export const CONFIG: ConfigValue = {
    */
   auth: {
     method: 'jwt',
-    skip: false,
+    skip: true,
     redirectPath: paths.dashboard.root,
   },
   /**
