@@ -8,6 +8,9 @@ from __future__ import annotations
 
 from langgraph.graph import END, START, StateGraph
 
+# Config-driven wiring
+from agent.services import config_store
+
 from agent.graph.nodes.behavior_segmentation import behavior_seg
 from agent.graph.nodes.context_inspection import context_inspection
 from agent.graph.nodes.delivery import delivery_node
@@ -23,12 +26,23 @@ from agent.graph.nodes.segment_merge import segment_merge
 from agent.state import State
 
 
-def create_state_graph(enabled_segments: set | None = None) -> StateGraph:
+def create_state_graph(enabled_segments: set | None = None, configs: dict | None = None) -> StateGraph:
     """Create a fresh, uncompiled StateGraph for the Retail workflow.
 
     Returns a `StateGraph(State)` with all nodes and routing configured. Call
     `compile()` on the result to get a runnable workflow instance.
     """
+    # If configs provided, derive enabled segments from node rows; otherwise
+    # fall back to legacy `enabled_segments` or defaults.
+    if configs is None:
+        try:
+            configs = config_store.store.get_all_configs()
+        except Exception:
+            configs = None
+
+    if configs and "nodes" in configs:
+        enabled_segments = {name for name, info in configs.get("nodes", {}).items() if info.get("enabled")}
+
     if enabled_segments is None:
         enabled_segments = {"behavior_seg", "profile_seg", "rfm_seg", "intent_seg"}
 
@@ -47,7 +61,9 @@ def create_state_graph(enabled_segments: set | None = None) -> StateGraph:
     if "intent_seg" in enabled_segments:
         graph.add_node("intent_seg", intent_seg)
     # Pre-segmentation inspection: normalize and flag incoming data
-    graph.add_node("context_inspection", context_inspection, destinations=("behavior_seg","profile_seg","rfm_seg","intent_seg"))
+    # Provide `destinations` metadata only for the segmentors that are enabled
+    inspection_destinations = tuple(p for p in ("behavior_seg", "profile_seg", "rfm_seg", "intent_seg") if p in enabled_segments)
+    graph.add_node("context_inspection", context_inspection, destinations=inspection_destinations)
     graph.add_node("retrieval", retrieval_node)
     # segment_merge: unify outputs from specialized segmentation nodes
     graph.add_node("segment_merge", segment_merge, destinations=("offers", "retrieval", "generation"))
@@ -106,6 +122,41 @@ def create_state_graph(enabled_segments: set | None = None) -> StateGraph:
         # As a last resort, default to behavior
         return "behavior_seg"
 
+    # Allow config-driven routing rules to override the default routing.
+    # Rules are evaluated top-to-bottom; a rule matches if its `source_node`
+    # matches the logical source (e.g., 'context_inspection' or 'segment_merge')
+    # and all key/value pairs in `condition` equal values in the state.
+    def _match_rules_for_source(source_key: str, state: State):
+        rules = []
+        if configs:
+            rules = configs.get("routing_rules", [])
+        for r in rules:
+            if not r.get("enabled", True):
+                continue
+            src = r.get("source_node")
+            # accept common alias 'seg' for 'segment_merge'
+            if source_key == "segment_merge" and src in ("segment_merge", "seg"):
+                pass
+            elif source_key == "context_inspection" and src in ("context_inspection", "inspection"):
+                pass
+            elif src != source_key:
+                continue
+
+            cond = r.get("condition") or {}
+            match = True
+            for k, v in cond.items():
+                if isinstance(state, dict):
+                    if state.get(k) != v:
+                        match = False
+                        break
+                else:
+                    if getattr(state, k, None) != v:
+                        match = False
+                        break
+            if match:
+                return r.get("target_node")
+        return None
+
     # Ensure the route function has a stable name for Studio drawing
     try:
         route_from_start.__name__ = "route_from_context_inspection"
@@ -126,10 +177,15 @@ def create_state_graph(enabled_segments: set | None = None) -> StateGraph:
     graph.add_edge("delivery", END)
 
     # Connect each specialized segmentation node into the `segment_merge`
-    graph.add_edge("behavior_seg", "segment_merge")
-    graph.add_edge("profile_seg", "segment_merge")
-    graph.add_edge("rfm_seg", "segment_merge")
-    graph.add_edge("intent_seg", "segment_merge")
+    # Only add these edges for nodes that were actually registered above
+    if "behavior_seg" in enabled_segments:
+        graph.add_edge("behavior_seg", "segment_merge")
+    if "profile_seg" in enabled_segments:
+        graph.add_edge("profile_seg", "segment_merge")
+    if "rfm_seg" in enabled_segments:
+        graph.add_edge("rfm_seg", "segment_merge")
+    if "intent_seg" in enabled_segments:
+        graph.add_edge("intent_seg", "segment_merge")
 
     # Post-segmentation router: choose offers/retrieval/generation based on
     # `routing_hint` or segment content. Provide a path_map so Studio renders
@@ -140,6 +196,12 @@ def create_state_graph(enabled_segments: set | None = None) -> StateGraph:
         return getattr(state, "routing_hint", None)
 
     def route_after_seg(state: State):
+        # First consult routing rules attached to the post-segmentation
+        # source (segment_merge). If a rule matches, use its target.
+        matched = _match_rules_for_source("segment_merge", state)
+        if matched:
+            return matched
+
         hint = _get_hint(state)
         if hint in ("retrieval", "offers", "generation"):
             return hint
@@ -218,4 +280,18 @@ def get_workflow():
             if workflow is None:
                 workflow = create_workflow()
     return workflow
+
+
+# Initialize the module-level `workflow` at import time so `from agent.graph import graph`
+# returns a usable workflow instance for existing callers and tests. Use the same
+# lock to avoid races when imported under test runners.
+try:
+    with _workflow_lock:
+        if workflow is None:
+            workflow = create_workflow()
+except Exception:
+    # Best-effort initialization: if workflow creation fails during import,
+    # leave `workflow` as None and allow callers to lazily initialize via
+    # `get_workflow()` to avoid crashing the test/imports.
+    pass
 

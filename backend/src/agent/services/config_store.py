@@ -11,45 +11,29 @@ import asyncio
 import importlib
 import logging
 import os
-from typing import Callable, Dict
+from typing import Any, Callable, Dict
 
 from sqlalchemy import JSON, TIMESTAMP, Boolean, Column, String, func, select
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import sessionmaker
 
-Base = declarative_base()
+from ..api.models import (
+    Base,
+    DeliveryConfig,
+    GenerationConfig,
+    NodeConfig,
+    OffersConfig,
+    RAGRetrievalConfig,
+    RoutingRule,
+    SafetyConfig,
+    SegmentorConfig,
+)
 
 # Logger for diagnostic messages during rebuilds
 logger = logging.getLogger(__name__)
 
 
-class SegmentorConfig(Base):
-    """ORM model for segmentor configuration rows.
-
-    This model maps to the "segmentor_configs" table and stores configuration
-    for individual segmentors used by the application.
-
-    Attributes:
-    ----------
-    segmentor_name : str
-        Primary key identifying the segmentor.
-    enabled : bool
-        Whether the segmentor is enabled.
-    metadata_ : dict
-        JSON metadata for the segmentor (column name is "metadata"; attribute is
-        named `metadata_` to avoid a SQLAlchemy reserved name conflict).
-    updated_at : datetime
-        Timestamp of last update (database-managed).
-    """
-    __tablename__ = "segmentor_configs"
-
-    segmentor_name = Column(String, primary_key=True)
-    enabled = Column(Boolean, nullable=False, default=True)
-    # `metadata` is a reserved attribute name on Declarative classes, so
-    # expose the DB column as `metadata` but use `metadata_` as the
-    # attribute name to avoid SQLAlchemy conflicts.
-    metadata_ = Column("metadata", JSON, nullable=False, default={})
-    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
+# Models were moved to `agent.services.models` to centralize schema definitions.
 
 
 def _default_database_url() -> str:
@@ -106,21 +90,155 @@ class ConfigStore:
             async with self._engine.begin() as conn:
                 await conn.run_sync(Base.metadata.create_all)
 
+    async def shutdown(self):
+        """Dispose the async engine and clear session factory.
+
+        This is safe to call multiple times and is idempotent.
+        """
+        if self._engine is not None:
+            try:
+                # AsyncEngine.dispose is a synchronous call that closes the
+                # underlying pool; calling it from async context is fine.
+                self._engine.dispose()
+            except Exception:  # pylint: disable=broad-except
+                logger.exception("Error disposing engine during shutdown")
+            finally:
+                self._engine = None
+                self._Session = None
+
     async def reload(self):
         """Reload configs from DB into an in-memory dict and call reload hook."""
         await self.init_db()
         async with self._lock:
             async with self._Session() as session:
-                result = await session.execute(select(SegmentorConfig))
-                rows = result.scalars().all()
-                new_configs = {
+                # Load segmentor configs (mapping by name)
+                seg_res = await session.execute(select(SegmentorConfig))
+                seg_rows = seg_res.scalars().all()
+                segmentors = {
                     r.segmentor_name: {
                         "enabled": bool(r.enabled),
                         "metadata": (getattr(r, "metadata_", None) or {}),
                     }
-                    for r in rows
+                    for r in seg_rows
                 }
-                self._configs = new_configs
+
+                # Load node configs as mapping
+                node_res = await session.execute(select(NodeConfig))
+                node_rows = node_res.scalars().all()
+                nodes = {
+                    r.name: {"enabled": bool(r.enabled), "metadata": (getattr(r, "metadata_", {}) or {})}
+                    for r in node_rows
+                }
+
+                # Routing rules
+                rr_res = await session.execute(select(RoutingRule))
+                rr_rows = rr_res.scalars().all()
+                routing_rules = [
+                    {
+                        "id": int(r.id),
+                        "source_node": r.source_node,
+                        "condition": (r.condition or {}),
+                        "target_node": r.target_node,
+                        "enabled": bool(r.enabled),
+                        "metadata": (getattr(r, "metadata_", {}) or {}),
+                    }
+                    for r in rr_rows
+                ]
+
+                # RAG retrieval configs
+                rag_res = await session.execute(select(RAGRetrievalConfig))
+                rag_rows = rag_res.scalars().all()
+                rag_retrieval = [
+                    {
+                        "id": int(r.id),
+                        "index_name": r.index_name,
+                        "vector_db": r.vector_db,
+                        "top_k": int(r.top_k) if r.top_k is not None else None,
+                        "filters": (r.filters or {}),
+                        "rerank": bool(r.rerank),
+                        "rerank_model": r.rerank_model,
+                        "enabled": bool(r.enabled),
+                        "metadata": (getattr(r, "metadata_", {}) or {}),
+                    }
+                    for r in rag_rows
+                ]
+
+                # Offers configs
+                offers_res = await session.execute(select(OffersConfig))
+                offers_rows = offers_res.scalars().all()
+                offers = [
+                    {
+                        "id": int(r.id),
+                        "model_name": r.model_name,
+                        "max_offers": r.max_offers,
+                        "personalization": bool(r.personalization),
+                        "enabled": bool(r.enabled),
+                        "metadata": (getattr(r, "metadata_", {}) or {}),
+                    }
+                    for r in offers_rows
+                ]
+
+                # Safety configs
+                safety_res = await session.execute(select(SafetyConfig))
+                safety_rows = safety_res.scalars().all()
+                safety = [
+                    {
+                        "id": int(r.id),
+                        "enabled": bool(r.enabled),
+                        "toxicity_threshold": float(r.toxicity_threshold),
+                        "hallucination_check": bool(r.hallucination_check),
+                        "banned_keywords": (r.banned_keywords or []),
+                        "metadata": (getattr(r, "metadata_", {}) or {}),
+                    }
+                    for r in safety_rows
+                ]
+
+                # Generation configs
+                gen_res = await session.execute(select(GenerationConfig))
+                gen_rows = gen_res.scalars().all()
+                generation = [
+                    {
+                        "id": int(r.id),
+                        "model_name": r.model_name,
+                        "temperature": float(r.temperature),
+                        "max_tokens": int(r.max_tokens),
+                        "system_prompt": r.system_prompt,
+                        "metadata": (getattr(r, "metadata_", {}) or {}),
+                    }
+                    for r in gen_rows
+                ]
+
+                # Delivery configs
+                del_res = await session.execute(select(DeliveryConfig))
+                del_rows = del_res.scalars().all()
+                delivery = [
+                    {
+                        "id": int(r.id),
+                        "channel": r.channel,
+                        "format": (r.format or {}),
+                        "enabled": bool(r.enabled),
+                        "metadata": (r.metadata or {}),
+                    }
+                    for r in del_rows
+                ]
+
+                # Maintain backward-compatible API: keep `_configs` as the
+                # original flat mapping of segmentor_name -> config dict so
+                # callers that expect the legacy shape continue to work.
+                self._configs = segmentors
+
+                # Expose the extended structured configs on a separate attr
+                # for new callers that need full control-plane data.
+                self._extended_configs = {
+                    "segmentors": segmentors,
+                    "nodes": nodes,
+                    "routing_rules": routing_rules,
+                    "rag_retrieval": rag_retrieval,
+                    "offers": offers,
+                    "safety": safety,
+                    "generation": generation,
+                    "delivery": delivery,
+                }
 
         # call hook without holding the lock
         if self._on_reload:
@@ -131,6 +249,15 @@ class ConfigStore:
     def get_configs(self) -> Dict[str, dict]:
         """Return the current in-memory configs (fast, non-blocking)."""
         return dict(self._configs)
+
+    def get_all_configs(self) -> Dict[str, Any]:
+        """Return the extended structured configuration cache.
+
+        This returns the full set of config tables loaded by `reload()` as a
+        dict. It is separate from `get_configs()` to preserve the legacy
+        segmentor-focused API.
+        """
+        return dict(getattr(self, "_extended_configs", {}))
 
     def register_on_reload(self, cb: Callable[[Dict[str, dict]], None]):
         """Register a callback to be invoked after configs are reloaded."""

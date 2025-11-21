@@ -26,3 +26,13 @@ async def startup() -> None:
     config_store.store.register_on_reload(_schedule_rebuild)
     # Schedule an initial rebuild asynchronously so it runs after startup
     asyncio.create_task(config_store.rebuild_workflow_from_store(config_store.store.get_configs()))
+
+
+async def shutdown() -> None:
+    """Perform graceful shutdown: dispose DB engine and cancel background tasks if needed."""
+    # Currently, we only need to close the DB engine used by ConfigStore.
+    try:
+        await config_store.store.shutdown()
+    except Exception:
+        # Log at the caller; keep shutdown best-effort and do not raise.
+        pass
