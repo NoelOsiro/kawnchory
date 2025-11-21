@@ -11,3 +11,91 @@ __pycache__/
 
 # Byte-compiled / optimized / DLL files
 *$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage
+.pytest_cache/
+coverage.xml
+htmlcov/
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# mypy
+/.mypy_cache/
+
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Logs and temporary files
+*.log
+tmp/
+
+# SQLite DB used for tests/dev (if any)
+*.sqlite3
+
+# Alembic/SQLAlchemy artifacts (optional)
+alembic/versions/*.pyc
+
+# Node modules if front-end exists
+node_modules/
+
+# Ensure we don't accidentally commit secrets written to JSON/YAML
+secrets.yml
+secrets.json
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# testing
+coverage
+
+# production
+.next
+.swc
+_static
+out
+dist
+build
+
+# environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# misc
+.DS_Store
+.vercel
+.netlify
+.vscode
+tsconfig.tsbuildinfo
+.ncurc.js
