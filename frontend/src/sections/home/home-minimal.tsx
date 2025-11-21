@@ -33,9 +33,9 @@ export function HomeMinimal({ sx, ...other }: BoxProps) {
   const renderDescription = () => (
     <>
       <SectionTitle
-        caption="Our Services"
+        caption="Platform"
         title="Why Choose"
-        txtGradient="AzubiISP?"
+        txtGradient="EchoVoice?"
         sx={{ mb: { xs: 5, md: 8 }, textAlign: { xs: 'center', md: 'left' } }}
       />
 
@@ -133,17 +133,17 @@ export function HomeMinimal({ sx, ...other }: BoxProps) {
 const ITEMS = [
   {
     icon: `${CONFIG.assetsDir}/assets/icons/home/ic-make-brand.svg`,
-    title: 'High-Speed Internet',
-    description: 'Lightning-fast connections with 99.9% uptime for seamless browsing and streaming.',
+    title: 'Compliant Personalization',
+    description: 'Deliver on-brand messaging that meets regulatory and compliance requirements.',
   },
   {
     icon: `${CONFIG.assetsDir}/assets/icons/home/ic-design.svg`,
-    title: 'Affordable Plans',
-    description: 'Flexible packages to suit every need and budget, with no hidden fees.',
+    title: 'A/B/n Experimentation',
+    description: 'Run controlled experiments to optimize messaging while preserving safety and brand.',
   },
   {
     icon: `${CONFIG.assetsDir}/assets/icons/home/ic-development.svg`,
-    title: '24/7 Support',
-    description: 'Our expert team is always ready to assist you with any issues or questions.',
+    title: 'Traceability & Auditing',
+    description: 'Full audit trails and traceable decisions for regulated-audit readiness.',
   },
 ];

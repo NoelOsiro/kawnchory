@@ -24,81 +24,48 @@ import { FloatLine, FloatPlusIcon, FloatTriangleDownIcon } from './components/sv
 
 const FAQs = [
   {
-    question: 'How does the billing cycle work?',
+    question: 'How does EchoVoice ensure regulatory compliance?',
     answer: (
       <Typography>
-        Our billing cycle runs monthly, starting from the date of your initial connection. You&apos;ll receive an invoice via email 7 days before your payment is due. We accept various payment methods including M-Pesa, credit/debit cards, and bank transfers.
+        EchoVoice applies compliance-first defaults, policy checks, and human-in-the-loop review
+        gates where required. All messaging passes configurable validation before delivery.
       </Typography>
     ),
   },
   {
-    question: 'Which internet plan is right for me?',
-    answer: (
-      <Box component="ul" sx={{ pl: 3, listStyleType: 'disc' }}>
-        <li><strong>Basic Plan</strong>: Ideal for light browsing, emails, and social media (Up to 10Mbps)</li>
-        <li><strong>Standard Plan</strong>: Perfect for streaming, video calls, and small households (Up to 25Mbps)</li>
-        <li><strong>Premium Plan</strong>: Best for 4K streaming, gaming, and multiple devices (Up to 100Mbps)</li>
-        <li>All plans include unlimited data and 24/7 customer support</li>
-        <li>
-          Use our
-          <Link
-            href="/speed-test"
-            sx={{ mx: 0.5, cursor: 'pointer' }}
-          >
-            speed test tool
-          </Link>
-          to check which speed works best in your area
-        </li>
-      </Box>
-    ),
-  },
-  {
-    question: 'What is your installation process?',
-    answer: (
-      <Box component="ul" sx={{ pl: 3, listStyleType: 'disc' }}>
-        <li>Submit an online application or call our support</li>
-        <li>Schedule an installation appointment (usually within 2-3 business days)</li>
-        <li>Our technician will install and test your connection</li>
-        <li>Enjoy your high-speed internet service</li>
-      </Box>
-    ),
-  },
-  {
-    question: 'What should I do if I experience connection issues?',
-    answer: (
-      <Box component="ul" sx={{ pl: 3, listStyleType: 'disc' }}>
-        <li>Restart your router and device</li>
-        <li>Check all cable connections</li>
-        <li>Run our <Link href="/troubleshoot" sx={{ cursor: 'pointer' }}>online diagnostic tool</Link></li>
-        <li>If issues persist, contact our 24/7 support team</li>
-      </Box>
-    ),
-  },
-  {
-    question: 'Do you offer business solutions?',
+    question: 'Can I run A/B/n experiments safely?',
     answer: (
       <Typography>
-        Yes! We provide dedicated internet solutions for businesses of all sizes, including
-        application. An example could be the back-office dashboard of a public-facing e-commerce
-        website in which staff would sign in and manage inventory, customers, etc.
+        Yes — EchoVoice includes experiment orchestration with control groups, rollout percentage,
+        and automatic safeguards to prevent unsafe or non-compliant variants from reaching users.
       </Typography>
     ),
   },
   {
-    question: 'Do you have a free demo to review the code before purchasing?',
+    question: 'What platforms does EchoVoice integrate with?',
+    answer: (
+      <Box component="ul" sx={{ pl: 3, listStyleType: 'disc' }}>
+        <li>CRM systems (Salesforce, HubSpot)</li>
+        <li>Messaging providers (Twilio, SendGrid)</li>
+        <li>Data warehouses and auditing systems</li>
+      </Box>
+    ),
+  },
+  {
+    question: 'How is activity tracked and audited?',
     answer: (
       <Typography>
-        Yes, you can check out our
-        <Link
-          href="https://mui.com/store/items/minimal-dashboard-free/"
-          target="_blank"
-          rel="noopener"
-          sx={{ mx: 0.5 }}
-        >
-          open source
-        </Link>
-        dashboard template which should give you an overview of the code quality and folder
-        structure. Keep in mind that some aspects may differ from this Paid version.
+        All decisions, inputs, and outputs are recorded in an immutable audit trail. You can export
+        logs for compliance reviews and regulatory reporting.
+      </Typography>
+    ),
+  },
+  {
+    question: 'Is there a demo or trial available?',
+    answer: (
+      <Typography>
+        Yes — request a demo or pilot through our contact form and our team will arrange an
+        onboarding session tailored to your compliance requirements.
       </Typography>
     ),
   },

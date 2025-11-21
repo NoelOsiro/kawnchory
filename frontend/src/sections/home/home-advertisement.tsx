@@ -85,8 +85,8 @@ const renderDescription = () => (
         typography: { xs: 'h2', md: 'h1' },
       }}
     >
-      Get started with
-      <br /> Minimal kit
+      Launch EchoVoice
+      <br /> Customer Personalization
       <Box
         component="span"
         sx={(theme) => ({
@@ -108,7 +108,7 @@ const renderDescription = () => (
         justifyContent: { xs: 'center', md: 'flex-start' },
       }}
     >
-      <m.div variants={varFade('inRight', { distance: 24 })}>
+        <m.div variants={varFade('inRight', { distance: 24 })}>
         <Button
           color="primary"
           size="large"
@@ -117,7 +117,7 @@ const renderDescription = () => (
           rel="noopener"
           href={paths.minimalStore}
         >
-          Purchase now
+          Request demo
         </Button>
       </m.div>
 
@@ -136,7 +136,7 @@ const renderDescription = () => (
             '&:hover': { borderColor: 'currentColor' },
           }}
         >
-          Get free version
+          Get started
         </Button>
       </m.div>
     </Box>

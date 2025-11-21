@@ -45,21 +45,21 @@ const renderLines = () => (
 export function HomeIntegrations({ sx, ...other }: BoxProps) {
   const renderDescription = () => (
     <SectionTitle
-      caption="Seamless Integration"
-      title="Works with all major"
-      txtGradient="networking"
+      caption="Integrations"
+      title="Works with major"
+      txtGradient="CRMs & Messaging"
       description={
         <>
           <Box component="span" sx={{ mb: 1, display: 'block' }}>
-            Comprehensive support for all major networking equipment and payment processors.
+            Out-of-the-box connectors for popular CRMs, messaging providers and data stores.
           </Box>
 
           <Box
             component="span"
             sx={{ fontStyle: 'italic', color: 'text.disabled', typography: 'caption' }}
           >
-            * RouterOS, MikroTik, Ubiquiti, and Cisco supported.
-            <br />* M-Pesa, bank transfers, and card payments available.
+            * Salesforce, HubSpot, and Zendesk.
+            <br />* Twilio, SendGrid, and other messaging providers supported.
           </Box>
         </>
       }

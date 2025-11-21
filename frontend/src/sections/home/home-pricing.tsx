@@ -30,10 +30,10 @@ export function HomePricing({ sx, ...other }: BoxProps) {
 
   const renderDescription = () => (
     <SectionTitle
-      caption="Internet Plans"
-      title="Affordable"
+      caption="Plans"
+      title="Transparent"
       txtGradient="Pricing"
-      description="Choose the perfect internet plan for your needs with transparent pricing in KES. No hidden fees, no surprises."
+      description="Pick a plan that fits your team: from quick pilots to enterprise-grade orchestration with audit controls and SLA-backed support."
       sx={{ mb: 8, textAlign: 'center' }}
     />
   );
@@ -294,21 +294,19 @@ function PlanCard({ plan, sx, ...other }: PlanCardProps) {
 // ----------------------------------------------------------------------
 
 const PLANS = Array.from({ length: 3 }, (_, index) => ({
-  license: ['Basic', 'Standard', 'Premium'][index],
-  price: [2500, 4500, 8500][index],
-  speed: ['10 Mbps', '25 Mbps', '50 Mbps'][index],
+  license: ['Starter', 'Pro', 'Enterprise'][index],
+  price: [49, 199, 999][index],
   commons: [
-    'Unlimited data',
-    '24/7 customer support',
-    'Free router installation',
-    '99.9% uptime guarantee',
-    'No throttling',
+    'Compliance-first defaults',
+    'A/B/n experiment support',
+    'Audit logs & traceability',
+    'Role-based access control',
   ],
   options: [
     'Email support',
     'Priority support',
-    'Dedicated support line',
-    'Free service calls',
+    'Dedicated account manager',
+    'Custom SLAs',
   ],
   icons: [
     `${CONFIG.assetsDir}/assets/icons/platforms/ic-wifi.svg`,

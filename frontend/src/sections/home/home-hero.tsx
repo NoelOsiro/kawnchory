@@ -78,10 +78,10 @@ export function HomeHero({ sx, ...other }: BoxProps) {
           },
         ]}
       >
-        <Box component="span" sx={{ width: 1, opacity: 0.24 }}>
+          <Box component="span" sx={{ width: 1, opacity: 0.24 }}>
           Experience the future of
         </Box>
-        internet with
+        customer personalization with
         <Box
           component={m.span}
           animate={{ backgroundPosition: '200% center' }}
@@ -99,7 +99,7 @@ export function HomeHero({ sx, ...other }: BoxProps) {
             ml: { xs: 0.75, md: 1, xl: 1.5 },
           }}
         >
-          AzubiISP
+          EchoVoice
         </Box>
       </Box>
     </m.div>
@@ -115,7 +115,7 @@ export function HomeHero({ sx, ...other }: BoxProps) {
           [theme.breakpoints.up(lgKey)]: { fontSize: 20, lineHeight: '36px' },
         }}
       >
-        {`Experience lightning-fast internet with 99.9% uptime. \nGet connected today with our affordable and reliable internet plans.`}
+        {`Compliant, on-brand personalization and A/B/n experimentation for regulated industries.\nDeliver safe, traceable customer messaging at scale.`}
       </Typography>
     </m.div>
   );
@@ -141,7 +141,7 @@ export function HomeHero({ sx, ...other }: BoxProps) {
             />
           ))}
         </AvatarGroup>
-        160+ Happy customers
+        Safe, traceable personalization
       </Box>
     </m.div>
   );
@@ -157,7 +157,7 @@ export function HomeHero({ sx, ...other }: BoxProps) {
     >
       <m.div {...motionProps}>
         <Stack spacing={2.5} sx={{ alignItems: 'center' }}>
-          <Button
+              <Button
             component={RouterLink}
             href={paths.dashboard.root}
             color="inherit"
@@ -166,7 +166,7 @@ export function HomeHero({ sx, ...other }: BoxProps) {
             startIcon={<Iconify width={24} icon="iconoir:flash" />}
           >
             <span>
-              Live tutorial
+              Live demo
               <Box
                 component="small"
                 sx={{
@@ -218,7 +218,7 @@ export function HomeHero({ sx, ...other }: BoxProps) {
     <Stack spacing={3} sx={{ textAlign: 'center' }}>
       <m.div {...motionProps}>
         <Typography variant="overline" sx={{ opacity: 0.4 }}>
-          Available For
+          Integrations
         </Typography>
       </m.div>
 

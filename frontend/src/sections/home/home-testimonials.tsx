@@ -75,8 +75,8 @@ export function HomeTestimonials({ sx, ...other }: BoxProps) {
   const renderDescription = () => (
     <SectionTitle
       caption="testimonials"
-      title="Rumors are flying"
-      txtGradient="that..."
+      title="Customers say"
+      txtGradient="about EchoVoice"
       sx={{ mb: { xs: 5, md: 8 }, textAlign: 'center' }}
     />
   );
@@ -181,9 +181,9 @@ export function HomeTestimonials({ sx, ...other }: BoxProps) {
         sx={{ gap: 5, flexDirection: { xs: 'column', md: 'row' } }}
       >
         {[
-          { label: 'Purchased order', value: 12.121 },
-          { label: 'Happy customers', value: 160 },
-          { label: 'Review rate', value: 4.9 },
+          { label: 'Campaigns delivered', value: 1.2 },
+          { label: 'Compliant customers', value: 160 },
+          { label: 'Audit score', value: 99.5 },
         ].map((item) => (
           <Stack key={item.label} spacing={2} sx={{ textAlign: 'center', width: 1 }}>
             <m.div variants={varFade('inUp', { distance: 24 })}>
@@ -257,53 +257,26 @@ const createReview = (index: number) => ({
 const TESTIMONIALS = [
   {
     ...createReview(1),
-    category: 'Design Quality',
-    content: `The quality of this template is very good, the TypeScript files are neat and the communication with the team behind this template is very good! I would recommend this template for any kind of project, as they implement new features every now and then and enhance their design. I will definitely be using more templates from this team and re-purchasing this template for other projects.`,
-    postedAt: 'April 20, 2024 23:15:30',
+    category: 'Compliance',
+    content: `EchoVoice helped us deliver personalized messages while staying audit-ready and compliant. Integration to our CRM was painless.`,
+    postedAt: 'April 20, 2025 23:15:30',
   },
   {
     ...createReview(2),
-    category: 'Design Quality',
-    content: `Amazing. I've never purchased complete front ends before, but I'll definitely be doing this again!`,
-    postedAt: 'March 19, 2024 23:15:30',
+    category: 'Experimentation',
+    content: `We scaled A/B/n experiments across channels safely and improved conversion rates with measurable wins.`,
+    postedAt: 'March 19, 2025 23:15:30',
   },
   {
     ...createReview(3),
-    category: 'Code Quality',
-    content: `Clean & Complete (Design & Code). Thansk Minimal team :)`,
-    postedAt: 'April 19, 2023 23:15:30',
+    category: 'Reliability',
+    content: `Traceable decision logs and clear audits made it simple to satisfy our internal compliance reviews.`,
+    postedAt: 'April 19, 2025 23:15:30',
   },
   {
     ...createReview(4),
-    category: 'Customer Support',
-    content: `Thanks to Minimal for customer support with email. I solved the problem. And the code quality is good, too.`,
-    postedAt: 'May 19, 2023 23:15:30',
-  },
-  {
-    ...createReview(5),
-    category: 'Customer Support',
-    content:
-      'Great UI kit, really beautiful as well. Also the customer support is very warm-hearted. However, I hope the components and themes can be provided as a separated project (package).',
-    postedAt: 'June 19, 2023 23:15:30',
-  },
-  {
-    ...createReview(6),
-    category: 'Design Quality',
-    content: 'I would never have been able to create all these beautifull components myself!',
-    postedAt: 'July 19, 2023 23:15:30',
-  },
-  {
-    ...createReview(7),
-    category: 'Code Quality',
-    content:
-      'The quality of this template is excellent. However, as an individual, the cost of obtaining the TypeScript Source version is beyond my means. Despite my strong desire to acquire it, my limited personal budget does not allow me to do so.',
-    postedAt: 'August 19, 2023 23:15:30',
-  },
-  {
-    ...createReview(8),
-    category: 'Customizability',
-    content:
-      'The design and code quality are impressive. Regular updates and excellent customer support are major advantages.',
-    postedAt: 'September 19, 2023 23:15:30',
+    category: 'Support',
+    content: `The EchoVoice team helped us onboard quickly and provided reliable support throughout our pilot.`,
+    postedAt: 'May 19, 2025 23:15:30',
   },
 ];

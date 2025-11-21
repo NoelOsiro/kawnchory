@@ -108,13 +108,13 @@ export function MainLayout({
               variant="contained"
               rel="noopener"
               target="_blank"
-              href={paths.minimalStore}
+              href={paths.auth.jwt.signUp}
               sx={(theme) => ({
                 display: 'none',
                 [theme.breakpoints.up(layoutQuery)]: { display: 'inline-flex' },
               })}
             >
-              Purchase
+              Sign up
             </Button>
           </Box>
         </>
